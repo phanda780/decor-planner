@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decor Planner — #HandaSharmaGaya</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1e293b;padding-bottom:72px}
+
+/* ── Header ── */
+.site-header{background:#0f172a;color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+.site-header h1{font-size:1.1rem;font-weight:700}
+.site-header p{font-size:0.75rem;color:#94a3b8;margin-top:1px}
+.header-meta{font-size:0.72rem;color:#475569;text-align:right;line-height:1.5}
+
+/* ── Event Tabs ── */
+.event-tabs{display:flex;background:#1e293b;overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:1px solid #334155}
+.event-tab{padding:12px 20px;font-size:0.78rem;font-weight:600;border:none;cursor:pointer;background:transparent;color:#64748b;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.event-tab:hover{color:#e2e8f0}
+.event-tab.active{color:#fff}
+.event-tab[data-event="sagan"].active{border-color:#3b82f6}
+.event-tab[data-event="mehndi"].active{border-color:#a78bfa}
+.event-tab[data-event="haldi"].active{border-color:#fbbf24}
+.event-tab[data-event="shaadi"].active{border-color:#4ade80}
+
+/* ── Event View ── */
+.event-view{display:none}
+.event-view.active{display:block}
+.event-inner{max-width:1480px;margin:0 auto;padding:16px 20px}
+
+.event-hero{border-radius:10px;padding:14px 20px;margin-bottom:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.event-hero .emoji{font-size:1.6rem;line-height:1;flex-shrink:0}
+.event-hero h2{font-size:1.1rem;font-weight:700;margin-bottom:2px}
+.event-hero .meta{font-size:0.78rem;opacity:.85}
+.event-hero .pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.event-hero .pill{font-size:0.68rem;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.18);color:rgba(255,255,255,.9)}
+
+/* ── Two-column layout ── */
+.event-body{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+@media(max-width:960px){.event-body{grid-template-columns:1fr}}
+
+/* ── Venue Panel ── */
+.venue-panel{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;position:sticky;top:8px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.venue-panel-header{padding:10px 14px;font-size:0.68rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#64748b;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between}
+.venue-carousel{position:relative;cursor:zoom-in}
+.venue-carousel img{width:100%;height:260px;object-fit:cover;display:block}
+.fullscreen-btn{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:5px;padding:4px 9px;font-size:0.68rem;cursor:pointer;z-index:2}
+.fullscreen-btn:hover{background:rgba(0,0,0,.85)}
+.venue-caption{padding:8px 14px;font-size:0.72rem;color:#64748b;background:#f8fafc;border-top:1px solid #f1f5f9;min-height:38px;line-height:1.4}
+.venue-nav{display:flex;align-items:center;justify-content:space-between;padding:7px 14px;border-top:1px solid #e2e8f0}
+.venue-nav button{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:5px;padding:4px 10px;font-size:0.75rem;cursor:pointer;color:#475569}
+.venue-nav button:hover{background:#e2e8f0}
+.venue-dots{display:flex;gap:5px}
+.venue-dot{width:6px;height:6px;border-radius:50%;background:#cbd5e1;cursor:pointer;transition:background .15s}
+.venue-dot.active{background:#1e293b}
+
+/* ── Decor Panel ── */
+.category-section{margin-bottom:22px}
+.category-title{font-size:0.68rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#94a3b8;margin-bottom:12px;padding-bottom:7px;border-bottom:1px solid #e2e8f0}
+.options-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:10px}
+
+/* ── Option Card ── */
+.option-card{background:#fff;border:2px solid #e2e8f0;border-radius:9px;overflow:hidden;transition:box-shadow .15s,border-color .15s}
+.option-card:hover{box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.option-card.top-pick{border-color:#f59e0b}
+.option-card.shortlisted{border-color:#3b82f6}
+.option-card.flagged{border-color:#fca5a5}
+
+.card-img-wrap{position:relative;overflow:hidden}
+.card-img-wrap img{width:100%;height:170px;object-fit:cover;display:block;transition:transform .2s}
+.option-card:hover .card-img-wrap img{transform:scale(1.04)}
+
+.card-status-badge{position:absolute;top:7px;left:7px;font-size:0.62rem;font-weight:700;letter-spacing:0.4px;padding:3px 7px;border-radius:4px;text-transform:uppercase;pointer-events:none}
+.badge-top{background:#f59e0b;color:#fff}
+.badge-short{background:#3b82f6;color:#fff}
+.badge-flag{background:#ef4444;color:#fff}
+
+.at-venue-btn{position:absolute;bottom:7px;right:7px;background:rgba(0,0,0,.68);color:#fff;border:none;border-radius:4px;padding:3px 7px;font-size:0.65rem;cursor:pointer;transition:background .15s;z-index:2}
+.at-venue-btn:hover{background:rgba(0,0,0,.9)}
+
+.card-body{padding:9px 11px}
+.card-title{font-size:0.8rem;font-weight:600;margin-bottom:2px;color:#1e293b;line-height:1.3}
+.card-desc{font-size:0.7rem;color:#64748b;line-height:1.4}
+.card-flag-note{font-size:0.68rem;color:#dc2626;margin-top:3px;font-style:italic}
+
+.card-actions{display:flex;gap:5px;padding:7px 11px;border-top:1px solid #f1f5f9}
+.btn-pick,.btn-short{flex:1;font-size:0.7rem;font-weight:600;padding:5px 4px;border-radius:5px;border:1px solid;cursor:pointer;transition:all .15s;text-align:center}
+.btn-pick{border-color:#fcd34d;color:#92400e;background:#fffbeb}
+.option-card.top-pick .btn-pick{background:#f59e0b;color:#fff;border-color:#f59e0b}
+.btn-short{border-color:#bfdbfe;color:#1e40af;background:#eff6ff}
+.option-card.shortlisted .btn-short{background:#3b82f6;color:#fff;border-color:#3b82f6}
+
+/* ── Pairing section (appears when selected) ── */
+.card-pairing{display:none;padding:7px 11px 9px;border-top:1px solid #f1f5f9;background:#f8fafc}
+.pairing-label{font-size:0.62rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#94a3b8;margin-bottom:5px}
+.pairing-thumbs{display:flex;gap:4px;overflow-x:auto;padding-bottom:2px}
+.pairing-thumb{height:46px;width:68px;object-fit:cover;border-radius:4px;border:2px solid #e2e8f0;cursor:pointer;flex-shrink:0;transition:border-color .1s,opacity .1s;opacity:.7}
+.pairing-thumb:hover{opacity:1}
+.pairing-thumb.pair-active-top{border-color:#f59e0b;opacity:1}
+.pairing-thumb.pair-active-short{border-color:#3b82f6;opacity:1}
+
+/* ── Sticky bottom bar ── */
+.sticky-bar{position:fixed;bottom:0;left:0;right:0;background:#0f172a;color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;z-index:200;gap:12px}
+.sticky-bar .count{font-size:0.82rem;color:#94a3b8}
+.sticky-bar .count strong{color:#fff}
+.btn-summary{background:#f59e0b;color:#1e293b;border:none;padding:8px 18px;border-radius:6px;font-size:0.8rem;font-weight:700;cursor:pointer}
+.btn-summary:hover{background:#fbbf24}
+.btn-summary:disabled{background:#334155;color:#6b7280;cursor:default}
+
+/* ── Preview Lightbox (At Venue / Fullscreen) ── */
+#lb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:1000;align-items:center;justify-content:center;flex-direction:column;padding:14px}
+#lb-overlay.open{display:flex}
+.lb-header{color:#94a3b8;font-size:0.72rem;letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px;text-align:center}
+.lb-panels{display:flex;gap:10px;max-width:96vw;width:100%}
+.lb-single{max-width:90vw;max-height:88vh}
+.lb-panel{flex:1;display:flex;flex-direction:column;min-width:0}
+.lb-panel-label{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;padding:5px 10px;text-align:center;border-radius:4px 4px 0 0}
+.lb-panel-label.venue-lbl{background:#15803d;color:#fff}
+.lb-panel-label.decor-lbl{background:#f59e0b;color:#1e293b}
+.lb-panel img,.lb-single{width:100%;object-fit:contain;border-radius:0 0 5px 5px;max-height:82vh}
+.lb-footer{color:#64748b;font-size:0.72rem;margin-top:10px;text-align:center}
+#lb-close{position:fixed;top:14px;right:20px;color:#fff;font-size:1.6rem;cursor:pointer;background:none;border:none;opacity:.7;line-height:1;z-index:10}
+#lb-close:hover{opacity:1}
+
+/* ── Vendor Summary Modal ── */
+#summary-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:900;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+#summary-overlay.open{display:flex}
+.summary-modal{background:#fff;border-radius:12px;max-width:960px;width:100%;padding:24px;max-height:90vh;overflow-y:auto}
+.summary-modal h2{font-size:1.1rem;font-weight:700;margin-bottom:3px}
+.summary-modal .sub{font-size:0.78rem;color:#64748b;margin-bottom:18px}
+.summary-section{margin-bottom:22px}
+.summary-section h3{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid #e2e8f0}
+.summary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+
+/* ── Summary pairing card (venue + decor side by side) ── */
+.sum-card{border:1px solid #e2e8f0;border-radius:8px;overflow:hidden}
+.sum-photos{display:grid;grid-template-columns:1fr 1fr}
+.sum-photo{position:relative}
+.sum-photo img{width:100%;height:130px;object-fit:cover;display:block}
+.sum-photo-lbl{position:absolute;bottom:0;left:0;right:0;font-size:0.58rem;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;padding:2px 5px;text-align:center}
+.lbl-venue{background:rgba(21,128,61,.85);color:#fff}
+.lbl-decor{background:rgba(245,158,11,.9);color:#1e293b}
+.sum-footer{padding:7px 9px;border-top:1px solid #f1f5f9;background:#fafafa}
+.sum-title{font-size:0.74rem;font-weight:600;color:#1e293b;line-height:1.3;margin-bottom:2px}
+.sum-cat{font-size:0.65rem;color:#94a3b8}
+.sum-badge{display:inline-block;font-size:0.6rem;font-weight:700;padding:2px 6px;border-radius:3px;margin-top:3px;text-transform:uppercase}
+.sum-badge.top{background:#fef3c7;color:#92400e}
+.sum-badge.short{background:#dbeafe;color:#1e40af}
+
+.summary-actions{display:flex;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid #e2e8f0}
+.sum-btn{padding:8px 18px;border-radius:6px;font-size:0.78rem;cursor:pointer;border:1px solid #e2e8f0;background:#f1f5f9;color:#475569}
+.sum-btn.primary{background:#0f172a;color:#fff;border-color:#0f172a}
+.summary-empty{color:#94a3b8;font-size:0.85rem;text-align:center;padding:40px 0}
+
+/* ── Info/note boxes ── */
+.note-box{background:#fef2f2;border:1px solid #fecaca;border-radius:7px;padding:10px 14px;font-size:0.75rem;color:#dc2626;margin-bottom:14px;line-height:1.5}
+.info-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:7px;padding:10px 14px;font-size:0.75rem;color:#1e40af;margin-bottom:14px;line-height:1.5}
+
+/* ── Print styles ── */
+@media print {
+  .site-header,.event-tabs,.sticky-bar,.summary-actions,.event-view:not(.active){display:none!important}
+  #summary-overlay{position:static;background:none;padding:0;display:block!important}
+  .summary-modal{max-height:none;box-shadow:none;border-radius:0;padding:16px}
+  .sum-card{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div>
+    <h1>Wedding Decor Planner · #HandaSharmaGaya</h1>
+    <p>The Uttrayan, Chakrata · Nov 1–2, 2026 · Parth ♡ Tanisha</p>
+  </div>
+  <div class="header-meta">⭐ Top Pick &nbsp;·&nbsp; ✓ Shortlist &nbsp;·&nbsp; 👁 Preview at venue<br>Then export a vendor summary with paired photos</div>
+</div>
+
+<div class="event-tabs">
+  <button class="event-tab active" data-event="sagan" onclick="switchEvent('sagan')">🌙 Evening Sagan · Nov 1</button>
+  <button class="event-tab" data-event="mehndi" onclick="switchEvent('mehndi')">🌿 Day Mehndi · Nov 1</button>
+  <button class="event-tab" data-event="haldi" onclick="switchEvent('haldi')">💛 Haldi · Nov 2</button>
+  <button class="event-tab" data-event="shaadi" onclick="switchEvent('shaadi')">💚 Shaadi · Nov 2</button>
+</div>
+
+<!-- ═══════════════════════ SAGAN ═══════════════════════ -->
+<div class="event-view active" id="ev-sagan">
+<div class="event-inner">
+  <div class="event-hero" style="background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff">
+    <div class="emoji">🌙</div>
+    <div>
+      <h2>Evening Sagan</h2>
+      <div class="meta">Nov 1 · 7:00 PM · Main Lawn (~14,600 sq ft) · 150–200 guests</div>
+      <div class="pills"><span class="pill">Night event</span><span class="pill">Open-air main lawn</span><span class="pill">Himalayan backdrop</span><span class="pill">Stage + ceiling + entrance</span></div>
+    </div>
+  </div>
+  <div class="event-body">
+    <div class="venue-panel">
+      <div class="venue-panel-header"><span>📍 Main Lawn — Venue Reference</span><span id="sagan-ctr">1/6</span></div>
+      <div class="venue-carousel" onclick="openVenueFull('sagan')">
+        <img id="sagan-venue-img" src="03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg" alt="">
+        <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('sagan')">⛶ Full screen</button>
+      </div>
+      <div class="venue-caption" id="sagan-venue-cap">Main Lawn — Full panoramic width</div>
+      <div class="venue-nav">
+        <button onclick="venueNav('sagan',-1)">← Prev</button>
+        <div class="venue-dots" id="sagan-dots"></div>
+        <button onclick="venueNav('sagan',1)">Next →</button>
+      </div>
+    </div>
+    <div class="decor-panel">
+      <div class="category-section">
+        <div class="category-title">🎭 Stage / Mandap Backdrop</div>
+        <div class="options-grid">
+          <div class="option-card" id="card-ss1" data-id="ss1" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/01_Sagan_Stage/sagan-stage-opt1-crystal-chandelier-neon.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg','02_Decor Inspo Photos/01_Sagan_Stage/sagan-stage-opt1-crystal-chandelier-neon.jpg','Main Lawn — valley-facing wall (stage backdrop)','Crystal chandelier + neon sign')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Crystal chandelier + neon sign</div><div class="card-desc">Tanisha's Option 1 — gold/crystal arch with neon hashtag. Contemporary glamour.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ss1','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ss1','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ss2" data-id="ss2" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/01_Sagan_Stage/sagan-stage-opt2-gold-arch-coin-curtain.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg','02_Decor Inspo Photos/01_Sagan_Stage/sagan-stage-opt2-gold-arch-coin-curtain.jpg','Main Lawn — valley-facing wall (stage backdrop)','Gold arch + coin curtain')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Gold arch + coin curtain</div><div class="card-desc">Tanisha's Option 2 — structural gold arch, hanging coin chain curtain. Regal, traditional.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ss2','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ss2','short')">✓ Shortlist</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="category-section">
+        <div class="category-title">✨ Venue Lighting &amp; Ceiling</div>
+        <div class="options-grid">
+          <div class="option-card" id="card-sl1" data-id="sl1" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt1-aerial-fairy-light-waves.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg','02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt1-aerial-fairy-light-waves.jpg','Main Lawn — full scale','Aerial fairy light waves')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Aerial fairy light waves</div><div class="card-desc">Undulating wave pattern overhead. Dramatic at night, ethereal movement effect.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sl1','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sl1','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-sl2" data-id="sl2" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt2-grand-fairy-light-canopy.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg','02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt2-grand-fairy-light-canopy.jpg','Main Lawn — full scale','Grand fairy light canopy tent')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Grand fairy light canopy tent ⭐</div><div class="card-desc">Tanya London's pick — "ye canopy sundar hai upar se." Full ceiling canopy tent look.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sl2','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sl2','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-sl3" data-id="sl3" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt3-draped-fabric-fairy-ceiling.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg','02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt3-draped-fabric-fairy-ceiling.jpg','Main Lawn — full scale','Draped fabric + fairy light ceiling')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Draped fabric + fairy light ceiling</div><div class="card-desc">White fabric draped between poles with fairy lights. Soft, romantic overhead canopy.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sl3','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sl3','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-sl4" data-id="sl4" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt4-mirror-dancefloor-fairy-curtain.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg','02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt4-mirror-dancefloor-fairy-curtain.jpg','Main Lawn — full scale','Mirror dance floor + fairy curtain')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Mirror dance floor + fairy curtain wall</div><div class="card-desc">Checkerboard mirror tiles on floor, fairy light curtain walls. High-glamour, disco feel.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sl4','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sl4','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-sl5" data-id="sl5" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt5-golden-sequin-canopy-lookingup.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg','02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt5-golden-sequin-canopy-lookingup.jpg','Main Lawn — full scale','Golden sequin canopy')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Golden sequin canopy — looking up</div><div class="card-desc">Gold sequin fabric overhead. Luxurious, warm. Works beautifully with warm wash lighting.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sl5','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sl5','short')">✓ Shortlist</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="category-section">
+        <div class="category-title">🚶 Entrance / Entry Walk</div>
+        <div class="options-grid">
+          <div class="option-card" id="card-se1" data-id="se1" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt1-drape-tunnel-chandeliers-redcarpet.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.28 (3).jpeg','02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt1-drape-tunnel-chandeliers-redcarpet.jpg','Main Lawn — entrance approach','Drape tunnel + chandeliers + red carpet')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Drape tunnel + chandeliers + red carpet</div><div class="card-desc">White fabric tunnel with hanging chandeliers, red carpet walkway. Grand arrival moment.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('se1','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('se1','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-se2" data-id="se2" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt2-fairy-light-tunnel-crystal-chandelier.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.28 (3).jpeg','02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt2-fairy-light-tunnel-crystal-chandelier.jpg','Main Lawn — entrance approach','Fairy light tunnel + crystal chandelier')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Fairy light tunnel + crystal chandelier</div><div class="card-desc">Fairy lights arch into a glowing tunnel, crystal chandelier centrepiece. Magical night entry.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('se2','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('se2','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-se3" data-id="se3" data-event="sagan">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt3-square-arch-fairy-light-corridor.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.28 (3).jpeg','02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt3-square-arch-fairy-light-corridor.jpg','Main Lawn — entrance approach','Square arch fairy light corridor')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Square arch fairy light corridor</div><div class="card-desc">Clean geometric square arches lined with fairy lights. Modern, structured entry corridor.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('se3','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('se3','short')">✓ Shortlist</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════ MEHNDI ═══════════════════════ -->
+<div class="event-view" id="ev-mehndi">
+<div class="event-inner">
+  <div class="event-hero" style="background:linear-gradient(135deg,#4c1d95,#7c3aed);color:#fff">
+    <div class="emoji">🌿</div>
+    <div>
+      <h2>Day Mehndi</h2>
+      <div class="meta">Nov 1 · 12:00 PM · Upper Terrace · Mosaic tile · 180° mountain panorama</div>
+      <div class="pills"><span class="pill">Daytime</span><span class="pill">Mosaic tile floor</span><span class="pill">Iron railing</span><span class="pill">Himalayan 180° view</span></div>
+    </div>
+  </div>
+  <div class="event-body">
+    <div class="venue-panel">
+      <div class="venue-panel-header"><span>📍 Upper Terrace — Venue Reference</span><span id="mehndi-ctr">1/5</span></div>
+      <div class="venue-carousel" onclick="openVenueFull('mehndi')">
+        <img id="mehndi-venue-img" src="03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg" alt="">
+        <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('mehndi')">⛶ Full screen</button>
+      </div>
+      <div class="venue-caption" id="mehndi-venue-cap">Upper Terrace — 180° Himalayan panorama (raw/empty)</div>
+      <div class="venue-nav">
+        <button onclick="venueNav('mehndi',-1)">← Prev</button>
+        <div class="venue-dots" id="mehndi-dots"></div>
+        <button onclick="venueNav('mehndi',1)">Next →</button>
+      </div>
+    </div>
+    <div class="decor-panel">
+      <div class="info-box">💡 The terrace has a fixed mosaic tile floor and iron railing — all decor sits on top. Reference photos 3–5 show a previous wedding with decor installed so you can see how this space looks when dressed up.</div>
+      <div class="category-section">
+        <div class="category-title">🌿 Mehndi Setup &amp; Tent Style</div>
+        <div class="note-box">⚠ Option 2 flagged by Tanya London: "looks western, won't go with ghagra."</div>
+        <div class="options-grid">
+          <div class="option-card" id="card-me1" data-id="me1" data-event="mehndi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/05_Mehndi/mehndi-opt1-yellow-teepee-marigold-bride-seating.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg','02_Decor Inspo Photos/05_Mehndi/mehndi-opt1-yellow-teepee-marigold-bride-seating.jpg','Upper Terrace — mountain backdrop','Yellow teepee + marigold')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Yellow teepee + marigold</div><div class="card-desc">Warm yellow teepee tent, marigold garlands, traditional seating. Tanya's preferred style.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('me1','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('me1','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card flagged" id="card-me2" data-id="me2" data-event="mehndi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/05_Mehndi/mehndi-opt2-colorful-tent-multicolor-western-style.jpg" alt="">
+            <div class="card-status-badge badge-flag">⚠ Flagged</div>
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg','02_Decor Inspo Photos/05_Mehndi/mehndi-opt2-colorful-tent-multicolor-western-style.jpg','Upper Terrace — mountain backdrop','Colorful tent — flagged')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Colorful multicolor tent</div><div class="card-desc">Multi-color western-style tent.</div><div class="card-flag-note">⚠ Tanya: "looks western, won't go with ghagra"</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('me2','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('me2','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-me3" data-id="me3" data-event="mehndi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/05_Mehndi/mehndi-opt3-white-teepee-colorful-floral-sofa.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg','02_Decor Inspo Photos/05_Mehndi/mehndi-opt3-white-teepee-colorful-floral-sofa.jpg','Upper Terrace — mountain backdrop','White teepee + colorful floral sofa')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">White teepee + colorful floral sofa</div><div class="card-desc">Clean white tent with vibrant floral patterned sofa seating inside.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('me3','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('me3','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-me4" data-id="me4" data-event="mehndi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/05_Mehndi/mehndi-opt4-white-teepee-marigold-yellow-torani.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg','02_Decor Inspo Photos/05_Mehndi/mehndi-opt4-white-teepee-marigold-yellow-torani.jpg','Upper Terrace — mountain backdrop','White teepee + marigold + yellow torani')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">White teepee + marigold + yellow torani</div><div class="card-desc">White tent with marigold garland detail and yellow torani fringe edging.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('me4','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('me4','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-me5" data-id="me5" data-event="mehndi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/05_Mehndi/mehndi-opt5-hot-pink-mandap-marigold-garlands.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg','02_Decor Inspo Photos/05_Mehndi/mehndi-opt5-hot-pink-mandap-marigold-garlands.jpg','Upper Terrace — mountain backdrop','Hot pink mandap + marigold garlands')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Hot pink mandap + marigold garlands</div><div class="card-desc">Bold hot-pink mandap with marigold garland strings. Vibrant, maximalist.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('me5','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('me5','short')">✓ Shortlist</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════ HALDI ═══════════════════════ -->
+<div class="event-view" id="ev-haldi">
+<div class="event-inner">
+  <div class="event-hero" style="background:linear-gradient(135deg,#92400e,#d97706);color:#fff">
+    <div class="emoji">💛</div>
+    <div>
+      <h2>Haldi</h2>
+      <div class="meta">Nov 2 · 9:00 AM · Front Lawn Garden · Intimate family (50–80 guests)</div>
+      <div class="pills"><span class="pill">Morning</span><span class="pill">Front garden lawn</span><span class="pill">White tent + crystal chandeliers</span><span class="pill">Gold chiavari chairs</span></div>
+    </div>
+  </div>
+  <div class="event-body">
+    <div class="venue-panel">
+      <div class="venue-panel-header"><span>📍 Front Garden — Venue Reference</span><span id="haldi-ctr">1/5</span></div>
+      <div class="venue-carousel" onclick="openVenueFull('haldi')">
+        <img id="haldi-venue-img" src="03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg" alt="">
+        <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('haldi')">⛶ Full screen</button>
+      </div>
+      <div class="venue-caption" id="haldi-venue-cap">Haldi Garden Tent — Interior with crystal chandeliers + gold chiavari chairs</div>
+      <div class="venue-nav">
+        <button onclick="venueNav('haldi',-1)">← Prev</button>
+        <div class="venue-dots" id="haldi-dots"></div>
+        <button onclick="venueNav('haldi',1)">Next →</button>
+      </div>
+    </div>
+    <div class="decor-panel">
+      <div class="info-box">💡 The Haldi space is the front garden with the white tent (crystal chandeliers, gold chiavari chairs already installed). Decor options below are about what you layer on top — backdrop wall, seating style, floral elements, centrepiece props.</div>
+      <div class="category-section">
+        <div class="category-title">💛 Haldi Decor &amp; Setup Style</div>
+        <div class="options-grid">
+          <div class="option-card" id="card-ha1" data-id="ha1" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt1-white-hanging-flowers-yellow-marigold-bohemian.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt1-white-hanging-flowers-yellow-marigold-bohemian.jpg','Haldi Tent — crystal chandeliers + gold chairs','White hanging flowers + marigold bohemian')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">White hanging flowers + marigold</div><div class="card-desc">Bohemian hanging white florals with marigold accents. Airy, daytime garden Haldi feel.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha1','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha1','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha2" data-id="ha2" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt2-yellow-mandap-marigold-garlands-brass-thalis.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt2-yellow-mandap-marigold-garlands-brass-thalis.jpg','Haldi Tent — crystal chandeliers + gold chairs','Yellow mandap + marigold + brass thalis')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Yellow mandap + marigold + brass thalis</div><div class="card-desc">Traditional yellow Haldi mandap, brass vessels and thalis as decor props.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha2','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha2','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha3" data-id="ha3" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt3-orange-pink-backdrop-marigold-bride.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (1).jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt3-orange-pink-backdrop-marigold-bride.jpg','Haldi Tent — wide interior view','Orange/pink backdrop + marigold')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Orange/pink backdrop + marigold</div><div class="card-desc">Warm orange-pink toned backdrop wall with marigold curtain detailing.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha3','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha3','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha4" data-id="ha4" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt4-white-flower-wall-marigold-bride-outdoor.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (7).jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt4-white-flower-wall-marigold-bride-outdoor.jpg','Haldi Front Garden — aerial layout view','White flower wall + marigold outdoor')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">White flower wall + marigold outdoor</div><div class="card-desc">White floral wall backdrop, outdoor marigold garland framing. Clean and fresh.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha4','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha4','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha5" data-id="ha5" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt5-yellow-arch-tassel-golden-bathtub.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt5-yellow-arch-tassel-golden-bathtub.jpg','Haldi Tent — crystal chandeliers + gold chairs','Yellow arch + tassel + golden bathtub')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Yellow arch + tassel + golden bathtub</div><div class="card-desc">Yellow tassel arch, gold accents. Golden bathtub as Haldi centrepiece prop — fun moment.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha5','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha5','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha6" data-id="ha6" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt6-yellow-marigold-arch-tree-ottoman-seating.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (1).jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt6-yellow-marigold-arch-tree-ottoman-seating.jpg','Haldi Tent — wide interior view','Marigold arch + tree + ottoman seating')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Marigold arch + tree + ottoman seating</div><div class="card-desc">Marigold arch, natural tree element, ottomans for seating. Organic, garden party look.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha6','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha6','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha7" data-id="ha7" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt7-white-garland-wall-greenery-diwan.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt7-white-garland-wall-greenery-diwan.jpg','Haldi Tent — crystal chandeliers + gold chairs','White garland wall + greenery diwan')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">White garland wall + greenery diwan</div><div class="card-desc">White flower garland wall, greenery surround, diwan seating. Tanya: "gol bartan ki jagah aise mein."</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha7','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha7','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha8" data-id="ha8" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt8-white-yellow-garland-wall-outdoor-sky.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (7).jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt8-white-yellow-garland-wall-outdoor-sky.jpg','Haldi Front Garden — aerial layout view','White + yellow garland wall, open sky')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">White + yellow garland wall, open sky</div><div class="card-desc">Clean white and yellow garlands as backdrop wall, open sky overhead.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha8','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha8','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha9" data-id="ha9" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt9-flower-curtain-pink-traditional-kadhai.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt9-flower-curtain-pink-traditional-kadhai.jpg','Haldi Tent — crystal chandeliers + gold chairs','Flower curtain + traditional kadhai')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Flower curtain + pink + traditional kadhai</div><div class="card-desc">Flower curtain backdrop with pink tones, traditional brass kadhai as centrepiece prop.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha9','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha9','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha10" data-id="ha10" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt10-yellow-garland-umbrella-diwan-chevron-floor.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (1).jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt10-yellow-garland-umbrella-diwan-chevron-floor.jpg','Haldi Tent — wide interior view','Yellow garland + umbrella + diwan')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Yellow garland + umbrella + diwan seating</div><div class="card-desc">Yellow garland canopy with hanging umbrella motifs, diwan seating on chevron floor mat.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha10','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha10','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-ha11" data-id="ha11" data-event="haldi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/04_Haldi/haldi-opt11-flower-curtain-outdoor-brass-vessels.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (7).jpeg','02_Decor Inspo Photos/04_Haldi/haldi-opt11-flower-curtain-outdoor-brass-vessels.jpg','Haldi Front Garden — aerial layout view','Flower curtain outdoor + brass vessels')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Flower curtain outdoor + brass vessels</div><div class="card-desc">Outdoor flower curtain wall with traditional brass vessel props on the ground.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('ha11','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('ha11','short')">✓ Shortlist</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════ SHAADI ═══════════════════════ -->
+<div class="event-view" id="ev-shaadi">
+<div class="event-inner">
+  <div class="event-hero" style="background:linear-gradient(135deg,#064e3b,#16a34a);color:#fff">
+    <div class="emoji">💚</div>
+    <div>
+      <h2>Main Wedding — Shaadi</h2>
+      <div class="meta">Nov 2 · 4:00 PM (sundowner) · Main Lawn · 150–200 guests</div>
+      <div class="pills"><span class="pill">Sundowner — golden hour</span><span class="pill">Same main lawn as Sagan</span><span class="pill">Mountain mandap backdrop</span><span class="pill">Full ceremony + dinner</span></div>
+    </div>
+  </div>
+  <div class="event-body">
+    <div class="venue-panel">
+      <div class="venue-panel-header"><span>📍 Main Lawn — Venue Reference</span><span id="shaadi-ctr">1/4</span></div>
+      <div class="venue-carousel" onclick="openVenueFull('shaadi')">
+        <img id="shaadi-venue-img" src="03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg" alt="">
+        <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('shaadi')">⛶ Full screen</button>
+      </div>
+      <div class="venue-caption" id="shaadi-venue-cap">Main Lawn — Valley/mountain-facing boundary (mandap location)</div>
+      <div class="venue-nav">
+        <button onclick="venueNav('shaadi',-1)">← Prev</button>
+        <div class="venue-dots" id="shaadi-dots"></div>
+        <button onclick="venueNav('shaadi',1)">Next →</button>
+      </div>
+    </div>
+    <div class="decor-panel">
+      <div class="info-box">💡 The mandap faces the mountain-valley view. Guests sit with backs to the hotel, looking at Himalayan peaks. 4 PM sundowner = golden hour light. These inspo shots are all mountain-wedding mandap references.</div>
+      <div class="category-section">
+        <div class="category-title">💐 Mandap &amp; Ceremony Decor</div>
+        <div class="options-grid">
+          <div class="option-card" id="card-sh1" data-id="sh1" data-event="shaadi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt1-mountain-couple-white-floral-arch.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg','02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt1-mountain-couple-white-floral-arch.jpg','Main Lawn — valley-facing wall (mandap location)','White floral arch — mountain backdrop')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">White floral arch — mountain backdrop ❤️</div><div class="card-desc">Parth's pick: "Bahot sahii / Dreamyyy." Clean white floral arch, Himalayan peaks as the natural backdrop.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sh1','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sh1','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-sh2" data-id="sh2" data-event="shaadi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt2-mountain-blush-white-floral-aisle-mandap.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg','02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt2-mountain-blush-white-floral-aisle-mandap.jpg','Main Lawn — full width (aisle + seating layout)','Blush/white floral aisle + mandap')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Blush/white floral aisle + mandap</div><div class="card-desc">Blush and white flowers lining the full aisle, matching mandap. Shows complete ceremony layout flow.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sh2','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sh2','short')">✓ Shortlist</button></div>
+          </div>
+          <div class="option-card" id="card-sh3" data-id="sh3" data-event="shaadi">
+            <div class="card-img-wrap"><img src="02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt3-mountain-aerial-ceremony-curved-seating.jpg" alt="">
+            <button class="at-venue-btn" onclick="openPreview('03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30 (2).jpeg','02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt3-mountain-aerial-ceremony-curved-seating.jpg','Main Lawn — elevated view (how mandap looks from above)','Aerial curved seating ceremony')">👁 At venue</button></div>
+            <div class="card-body"><div class="card-title">Aerial — curved seating ceremony layout</div><div class="card-desc">Aerial perspective showing curved guest seating radiating from the mandap. Seating arrangement inspo.</div></div>
+            <div class="card-actions"><button class="btn-pick" onclick="setStatus('sh3','top')">⭐ Top Pick</button><button class="btn-short" onclick="setStatus('sh3','short')">✓ Shortlist</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ── Sticky bar ── -->
+<div class="sticky-bar">
+  <div class="count"><strong id="bar-count">0</strong> items selected</div>
+  <button class="btn-summary" id="btn-summary" onclick="openSummary()" disabled>View Vendor Summary →</button>
+</div>
+
+<!-- ── Preview Lightbox (at venue / fullscreen) ── -->
+<div id="lb-overlay" onclick="if(event.target===this)closeLb()">
+  <button id="lb-close" onclick="closeLb()">×</button>
+  <div class="lb-header" id="lb-header">Venue reference ←→ Decor inspiration</div>
+  <div id="lb-panels-wrap" class="lb-panels">
+    <div class="lb-panel" id="lb-panel-venue">
+      <div class="lb-panel-label venue-lbl" id="lb-venue-label">📍 Venue</div>
+      <img id="lb-venue-img" src="" alt="">
+    </div>
+    <div class="lb-panel" id="lb-panel-decor">
+      <div class="lb-panel-label decor-lbl" id="lb-decor-label">✨ Decor Inspo</div>
+      <img id="lb-decor-img" src="" alt="">
+    </div>
+  </div>
+  <div class="lb-footer" id="lb-footer">Esc or click outside to close</div>
+</div>
+
+<!-- ── Vendor Summary Modal ── -->
+<div id="summary-overlay" onclick="if(event.target===this)closeSummaryDirect()">
+  <div class="summary-modal">
+    <h2>Vendor Summary — #HandaSharmaGaya</h2>
+    <p class="sub">The Uttrayan, Chakrata · Nov 1–2, 2026 · Parth ♡ Tanisha · Each card shows venue photo (left) + decor inspiration (right)</p>
+    <div id="summary-content"></div>
+    <div class="summary-actions">
+      <button class="sum-btn" onclick="closeSummaryDirect()">← Back to Planner</button>
+      <button class="sum-btn primary" onclick="window.print()">🖨 Print / Save as PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Venue photo data ──
+const venueData = {
+  sagan: { photos: [
+    {src:"03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg",cap:"Main Lawn — Full panoramic width"},
+    {src:"03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (5).jpeg",cap:"Main Lawn — Hotel building + open expanse"},
+    {src:"03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg",cap:"Main Lawn — Valley-facing wall (stage backdrop location)"},
+    {src:"03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30 (2).jpeg",cap:"Main Lawn — Elevated view from hotel staircase"},
+    {src:"01_Venue Photos/A_Main_Lawn_Sagan_and_Shaadi/main-lawn-evening-stage-seating-wide.jpeg",cap:"Reference: Decorated version (previous wedding) — stage + seating layout"},
+    {src:"01_Venue Photos/A_Main_Lawn_Sagan_and_Shaadi/main-lawn-evening-overview-black-tables-stone-wall.jpeg",cap:"Reference: Table seating layout with stone wall backdrop"},
+  ], idx:0 },
+  mehndi: { photos: [
+    {src:"03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg",cap:"Upper Terrace — 180° Himalayan panorama (raw/empty)"},
+    {src:"03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27.jpeg",cap:"Upper Terrace — Mosaic tile floor + iron railing"},
+    {src:"01_Venue Photos/B_Upper_Terrace_Mehndi/terrace-white-drape-canopy-mountain-backdrop.jpeg",cap:"Reference: White canopy + mountain backdrop (decorated)"},
+    {src:"01_Venue Photos/B_Upper_Terrace_Mehndi/terrace-mandap-teal-sofas-mountain-view.jpeg",cap:"Reference: Mandap + teal sofas with mountain view (decorated)"},
+    {src:"01_Venue Photos/B_Upper_Terrace_Mehndi/terrace-wide-printed-floor-mat-seating.jpeg",cap:"Reference: Full width floor mat + guest seating (decorated)"},
+  ], idx:0 },
+  haldi: { photos: [
+    {src:"03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg",cap:"Haldi Garden Tent — Interior with crystal chandeliers + gold chiavari chairs"},
+    {src:"03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (1).jpeg",cap:"Haldi Tent — Wide interior, full seating area visible"},
+    {src:"03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (7).jpeg",cap:"Haldi Front Garden — Aerial bird's-eye view (full spatial layout)"},
+    {src:"03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.27 (4).jpeg",cap:"Haldi Carpet — Geometric triangle carpet close-up (entry path)"},
+    {src:"03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.27 (5).jpeg",cap:"Haldi Approach — Full carpet path with hotel building and gate"},
+  ], idx:0 },
+  shaadi: { photos: [
+    {src:"03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg",cap:"Main Lawn — Valley-facing boundary (mandap backdrop, sundowner)"},
+    {src:"03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg",cap:"Main Lawn — Full panoramic width (aisle + seating scale)"},
+    {src:"03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30 (2).jpeg",cap:"Main Lawn — Elevated view (how mandap area looks from above)"},
+    {src:"01_Venue Photos/A_Main_Lawn_Sagan_and_Shaadi/main-lawn-evening-grass-foreground-fairy-lights-stage.jpeg",cap:"Reference: Evening stage with fairy lights (decorated)"},
+  ], idx:0 },
+};
+
+// Venue carousel
+function venueNav(eid, dir) {
+  const d = venueData[eid];
+  d.idx = (d.idx + dir + d.photos.length) % d.photos.length;
+  updateVenueDisplay(eid);
+}
+function updateVenueDisplay(eid) {
+  const d = venueData[eid];
+  const p = d.photos[d.idx];
+  document.getElementById(eid+'-venue-img').src = p.src;
+  document.getElementById(eid+'-venue-cap').textContent = p.cap;
+  document.getElementById(eid+'-ctr').textContent = (d.idx+1)+'/'+d.photos.length;
+  document.querySelectorAll('#'+eid+'-dots .venue-dot').forEach((dot,i)=>dot.classList.toggle('active',i===d.idx));
+}
+function initDots(eid) {
+  const c = document.getElementById(eid+'-dots');
+  c.innerHTML = '';
+  venueData[eid].photos.forEach((_,i)=>{
+    const dot = document.createElement('div');
+    dot.className = 'venue-dot'+(i===0?' active':'');
+    dot.onclick = ()=>{ venueData[eid].idx=i; updateVenueDisplay(eid); };
+    c.appendChild(dot);
+  });
+}
+['sagan','mehndi','haldi','shaadi'].forEach(e=>{ initDots(e); updateVenueDisplay(e); });
+
+// Fullscreen single-image
+function openVenueFull(eid) {
+  const p = venueData[eid].photos[venueData[eid].idx];
+  document.getElementById('lb-header').textContent = p.cap;
+  document.getElementById('lb-panel-venue').style.display = 'none';
+  document.getElementById('lb-panel-decor').style.display = 'none';
+  let single = document.getElementById('lb-single-img');
+  if (!single) {
+    single = document.createElement('img');
+    single.id = 'lb-single-img';
+    single.className = 'lb-single';
+    document.getElementById('lb-panels-wrap').appendChild(single);
+  }
+  single.src = p.src;
+  single.style.display = 'block';
+  document.getElementById('lb-footer').textContent = 'Click outside or Esc to close';
+  document.getElementById('lb-overlay').classList.add('open');
+}
+
+// Preview at venue (side by side)
+function openPreview(vSrc, dSrc, vLabel, dLabel) {
+  document.getElementById('lb-header').textContent = 'Venue reference ←→ Decor inspiration';
+  const single = document.getElementById('lb-single-img');
+  if (single) single.style.display = 'none';
+  document.getElementById('lb-panel-venue').style.display = 'flex';
+  document.getElementById('lb-panel-decor').style.display = 'flex';
+  document.getElementById('lb-venue-img').src = vSrc;
+  document.getElementById('lb-decor-img').src = dSrc;
+  document.getElementById('lb-venue-label').innerHTML = '📍 '+vLabel;
+  document.getElementById('lb-decor-label').innerHTML = '✨ '+dLabel;
+  document.getElementById('lb-footer').textContent = 'Left: your venue · Right: decor inspiration · Esc or click outside to close';
+  document.getElementById('lb-overlay').classList.add('open');
+  event.stopPropagation();
+}
+function closeLb() { document.getElementById('lb-overlay').classList.remove('open'); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeLb(); closeSummaryDirect(); }});
+
+// Tab switching
+function switchEvent(id) {
+  document.querySelectorAll('.event-view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.event-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('ev-'+id).classList.add('active');
+  document.querySelector('[data-event="'+id+'"]').classList.add('active');
+}
+
+// ── Selections + Pairing ──
+const PICK_KEY = 'uttrayan_decor_picks_v1';
+const PAIR_KEY = 'uttrayan_decor_pairings_v1';
+let picks = JSON.parse(localStorage.getItem(PICK_KEY)||'{}');
+let pairings = JSON.parse(localStorage.getItem(PAIR_KEY)||'{}');
+
+const EVENT_KEY = {Sagan:'sagan',Mehndi:'mehndi',Haldi:'haldi',Shaadi:'shaadi'};
+const cardMeta = {
+  ss1:{event:'Sagan',cat:'Stage',title:'Crystal chandelier + neon sign',img:'02_Decor Inspo Photos/01_Sagan_Stage/sagan-stage-opt1-crystal-chandelier-neon.jpg'},
+  ss2:{event:'Sagan',cat:'Stage',title:'Gold arch + coin curtain',img:'02_Decor Inspo Photos/01_Sagan_Stage/sagan-stage-opt2-gold-arch-coin-curtain.jpg'},
+  sl1:{event:'Sagan',cat:'Venue Lighting',title:'Aerial fairy light waves',img:'02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt1-aerial-fairy-light-waves.jpg'},
+  sl2:{event:'Sagan',cat:'Venue Lighting',title:'Grand fairy light canopy tent',img:'02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt2-grand-fairy-light-canopy.jpg'},
+  sl3:{event:'Sagan',cat:'Venue Lighting',title:'Draped fabric + fairy light ceiling',img:'02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt3-draped-fabric-fairy-ceiling.jpg'},
+  sl4:{event:'Sagan',cat:'Venue Lighting',title:'Mirror dance floor + fairy curtain wall',img:'02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt4-mirror-dancefloor-fairy-curtain.jpg'},
+  sl5:{event:'Sagan',cat:'Venue Lighting',title:'Golden sequin canopy',img:'02_Decor Inspo Photos/02_Sagan_Venue_Lighting/sagan-light-opt5-golden-sequin-canopy-lookingup.jpg'},
+  se1:{event:'Sagan',cat:'Entrance',title:'Drape tunnel + chandeliers + red carpet',img:'02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt1-drape-tunnel-chandeliers-redcarpet.jpg'},
+  se2:{event:'Sagan',cat:'Entrance',title:'Fairy light tunnel + crystal chandelier',img:'02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt2-fairy-light-tunnel-crystal-chandelier.jpg'},
+  se3:{event:'Sagan',cat:'Entrance',title:'Square arch fairy light corridor',img:'02_Decor Inspo Photos/03_Sagan_Entrance/entrance-opt3-square-arch-fairy-light-corridor.jpg'},
+  me1:{event:'Mehndi',cat:'Mehndi Setup',title:'Yellow teepee + marigold',img:'02_Decor Inspo Photos/05_Mehndi/mehndi-opt1-yellow-teepee-marigold-bride-seating.jpg'},
+  me2:{event:'Mehndi',cat:'Mehndi Setup',title:'Colorful multicolor tent ⚠',img:'02_Decor Inspo Photos/05_Mehndi/mehndi-opt2-colorful-tent-multicolor-western-style.jpg'},
+  me3:{event:'Mehndi',cat:'Mehndi Setup',title:'White teepee + colorful floral sofa',img:'02_Decor Inspo Photos/05_Mehndi/mehndi-opt3-white-teepee-colorful-floral-sofa.jpg'},
+  me4:{event:'Mehndi',cat:'Mehndi Setup',title:'White teepee + marigold + yellow torani',img:'02_Decor Inspo Photos/05_Mehndi/mehndi-opt4-white-teepee-marigold-yellow-torani.jpg'},
+  me5:{event:'Mehndi',cat:'Mehndi Setup',title:'Hot pink mandap + marigold garlands',img:'02_Decor Inspo Photos/05_Mehndi/mehndi-opt5-hot-pink-mandap-marigold-garlands.jpg'},
+  ha1:{event:'Haldi',cat:'Haldi Decor',title:'White hanging flowers + marigold',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt1-white-hanging-flowers-yellow-marigold-bohemian.jpg'},
+  ha2:{event:'Haldi',cat:'Haldi Decor',title:'Yellow mandap + marigold + brass thalis',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt2-yellow-mandap-marigold-garlands-brass-thalis.jpg'},
+  ha3:{event:'Haldi',cat:'Haldi Decor',title:'Orange/pink backdrop + marigold',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt3-orange-pink-backdrop-marigold-bride.jpg'},
+  ha4:{event:'Haldi',cat:'Haldi Decor',title:'White flower wall + marigold outdoor',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt4-white-flower-wall-marigold-bride-outdoor.jpg'},
+  ha5:{event:'Haldi',cat:'Haldi Decor',title:'Yellow arch + tassel + golden bathtub',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt5-yellow-arch-tassel-golden-bathtub.jpg'},
+  ha6:{event:'Haldi',cat:'Haldi Decor',title:'Marigold arch + tree + ottoman seating',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt6-yellow-marigold-arch-tree-ottoman-seating.jpg'},
+  ha7:{event:'Haldi',cat:'Haldi Decor',title:'White garland wall + greenery diwan',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt7-white-garland-wall-greenery-diwan.jpg'},
+  ha8:{event:'Haldi',cat:'Haldi Decor',title:'White + yellow garland wall, open sky',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt8-white-yellow-garland-wall-outdoor-sky.jpg'},
+  ha9:{event:'Haldi',cat:'Haldi Decor',title:'Flower curtain + traditional kadhai',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt9-flower-curtain-pink-traditional-kadhai.jpg'},
+  ha10:{event:'Haldi',cat:'Haldi Decor',title:'Yellow garland + umbrella + diwan seating',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt10-yellow-garland-umbrella-diwan-chevron-floor.jpg'},
+  ha11:{event:'Haldi',cat:'Haldi Decor',title:'Flower curtain outdoor + brass vessels',img:'02_Decor Inspo Photos/04_Haldi/haldi-opt11-flower-curtain-outdoor-brass-vessels.jpg'},
+  sh1:{event:'Shaadi',cat:'Mandap & Ceremony',title:'White floral arch — mountain backdrop',img:'02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt1-mountain-couple-white-floral-arch.jpg'},
+  sh2:{event:'Shaadi',cat:'Mandap & Ceremony',title:'Blush/white floral aisle + mandap',img:'02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt2-mountain-blush-white-floral-aisle-mandap.jpg'},
+  sh3:{event:'Shaadi',cat:'Mandap & Ceremony',title:'Aerial curved seating ceremony layout',img:'02_Decor Inspo Photos/06_Main_Wedding_Shaadi/shaadi-opt3-mountain-aerial-ceremony-curved-seating.jpg'},
+};
+
+function setStatus(id, newStatus) {
+  picks[id] = picks[id] === newStatus ? null : newStatus;
+  if (!picks[id]) { delete picks[id]; delete pairings[id]; }
+  localStorage.setItem(PICK_KEY, JSON.stringify(picks));
+  localStorage.setItem(PAIR_KEY, JSON.stringify(pairings));
+  renderCard(id);
+  updateBar();
+}
+
+function setPairing(id, idx) {
+  pairings[id] = idx;
+  localStorage.setItem(PAIR_KEY, JSON.stringify(pairings));
+  renderCard(id);
+}
+
+function renderCard(id) {
+  const card = document.getElementById('card-'+id);
+  if (!card) return;
+  const status = picks[id];
+  card.classList.remove('top-pick','shortlisted');
+  card.querySelectorAll('.card-status-badge:not(.badge-flag)').forEach(b=>b.remove());
+  if (status === 'top') {
+    card.classList.add('top-pick');
+    const b = document.createElement('div');
+    b.className = 'card-status-badge badge-top';
+    b.textContent = '⭐ Top Pick';
+    card.querySelector('.card-img-wrap').prepend(b);
+  } else if (status === 'short') {
+    card.classList.add('shortlisted');
+    const b = document.createElement('div');
+    b.className = 'card-status-badge badge-short';
+    b.textContent = '✓ Shortlisted';
+    card.querySelector('.card-img-wrap').prepend(b);
+  }
+  // Pairing section
+  let pDiv = card.querySelector('.card-pairing');
+  if (!pDiv) {
+    pDiv = document.createElement('div');
+    pDiv.className = 'card-pairing';
+    card.appendChild(pDiv);
+  }
+  if (status) {
+    const meta = cardMeta[id];
+    const ek = EVENT_KEY[meta.event];
+    const vPhotos = venueData[ek].photos;
+    const activeIdx = pairings[id] !== undefined ? pairings[id] : 0;
+    const cls = status === 'top' ? 'pair-active-top' : 'pair-active-short';
+    pDiv.innerHTML = '<div class="pairing-label">📍 Choose venue photo for vendor summary:</div>'
+      + '<div class="pairing-thumbs">'
+      + vPhotos.map((p,i)=>`<img src="${p.src}" class="pairing-thumb${i===activeIdx?' '+cls:''}" onclick="setPairing('${id}',${i})" title="${p.cap}">`).join('')
+      + '</div>';
+    pDiv.style.display = 'block';
+  } else {
+    pDiv.style.display = 'none';
+    pDiv.innerHTML = '';
+  }
+}
+
+function updateBar() {
+  const count = Object.keys(picks).length;
+  document.getElementById('bar-count').textContent = count;
+  document.getElementById('btn-summary').disabled = count === 0;
+}
+
+// Restore on load
+Object.keys(picks).forEach(id => renderCard(id));
+updateBar();
+
+// ── Vendor Summary ──
+function openSummary() {
+  const ORDER = ['Sagan','Mehndi','Haldi','Shaadi'];
+  const COLORS = {Sagan:'#1e40af',Mehndi:'#6d28d9',Haldi:'#b45309',Shaadi:'#15803d'};
+  const EMOJIS = {Sagan:'🌙',Mehndi:'🌿',Haldi:'💛',Shaadi:'💚'};
+
+  // Group picks by event
+  const byEvent = {};
+  Object.entries(picks).forEach(([id, status]) => {
+    const meta = cardMeta[id];
+    if (!meta) return;
+    if (!byEvent[meta.event]) byEvent[meta.event] = {top:[],short:[]};
+    byEvent[meta.event][status === 'top' ? 'top' : 'short'].push({id, status, ...meta});
+  });
+
+  let html = '';
+  ORDER.forEach(ev => {
+    const grp = byEvent[ev];
+    if (!grp) return;
+    const all = [...grp.top, ...grp.short];
+    if (!all.length) return;
+    html += `<div class="summary-section"><h3 style="color:${COLORS[ev]}">${EMOJIS[ev]} ${ev}</h3><div class="summary-grid">`;
+    all.forEach(item => {
+      const ek = EVENT_KEY[item.event];
+      const vPhotos = venueData[ek].photos;
+      const pIdx = pairings[item.id] !== undefined ? pairings[item.id] : 0;
+      const vp = vPhotos[pIdx];
+      html += `<div class="sum-card">
+        <div class="sum-photos">
+          <div class="sum-photo"><img src="${vp.src}" alt=""><div class="sum-photo-lbl lbl-venue">📍 Venue</div></div>
+          <div class="sum-photo"><img src="${item.img}" alt=""><div class="sum-photo-lbl lbl-decor">✨ Inspo</div></div>
+        </div>
+        <div class="sum-footer">
+          <div class="sum-title">${item.title}</div>
+          <div class="sum-cat">${ev} · ${item.cat}</div>
+          <span class="sum-badge ${item.status==='top'?'top':'short'}">${item.status==='top'?'⭐ Top Pick':'✓ Shortlisted'}</span>
+        </div>
+      </div>`;
+    });
+    html += '</div></div>';
+  });
+
+  if (!html) html = '<div class="summary-empty">No items selected yet.</div>';
+  document.getElementById('summary-content').innerHTML = html;
+  document.getElementById('summary-overlay').classList.add('open');
+}
+function closeSummaryDirect() { document.getElementById('summary-overlay').classList.remove('open'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#HandaSharmaGaya — Decor Inspo Catalog</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', serif; background: #faf9f7; color: #2d2d2d; }
+
+  header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    text-align: center;
+    padding: 40px 20px 30px;
+  }
+  header h1 { font-size: 2rem; letter-spacing: 3px; font-weight: 400; }
+  header p { margin-top: 8px; color: #c8b8a2; font-size: 0.95rem; letter-spacing: 1px; }
+  header .hashtag { color: #f0c67a; font-size: 1.1rem; margin-top: 6px; }
+
+  nav {
+    display: flex;
+    gap: 8px;
+    padding: 18px 30px;
+    background: white;
+    border-bottom: 1px solid #e8e0d8;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  nav a {
+    padding: 7px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.82rem;
+    letter-spacing: 0.5px;
+    font-family: 'Georgia', serif;
+    transition: all 0.2s;
+  }
+  .nav-sagan { background: #1a1a2e; color: #f0c67a; }
+  .nav-haldi { background: #fef3c7; color: #92400e; }
+  .nav-mehndi { background: #fdf4ff; color: #7c3aed; }
+  .nav-shaadi { background: #f0fdf4; color: #166534; }
+  nav a:hover { opacity: 0.8; transform: translateY(-1px); }
+
+  .section {
+    max-width: 1300px;
+    margin: 50px auto;
+    padding: 0 30px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .section-tag {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-family: sans-serif;
+  }
+  .tag-sagan { background: #1a1a2e; color: #f0c67a; }
+  .tag-haldi { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+  .tag-mehndi { background: #fdf4ff; color: #7c3aed; border: 1px solid #e9d5ff; }
+  .tag-shaadi { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+
+  .section-header h2 { font-size: 1.5rem; font-weight: 400; }
+  .section-meta {
+    font-size: 0.82rem;
+    color: #888;
+    margin-bottom: 24px;
+    margin-left: 4px;
+    font-family: sans-serif;
+  }
+
+  .subsection-label {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #999;
+    font-family: sans-serif;
+    margin: 28px 0 14px;
+    padding-left: 4px;
+    border-left: 3px solid #ddd;
+    padding-left: 10px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 16px;
+  }
+  .grid-2 { grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.14); }
+
+  .card img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    display: block;
+  }
+  .card-body {
+    padding: 14px 16px;
+  }
+  .card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #2d2d2d;
+    margin-bottom: 4px;
+  }
+  .card-desc {
+    font-size: 0.78rem;
+    color: #777;
+    line-height: 1.5;
+    font-family: sans-serif;
+  }
+
+  .note-box {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 0.82rem;
+    color: #92400e;
+    margin-bottom: 24px;
+    font-family: sans-serif;
+  }
+  .note-box strong { color: #78350f; }
+
+  .divider { border: none; border-top: 1px solid #ece8e3; margin: 50px 0; }
+
+  /* Lightbox */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .lightbox.active { display: flex; }
+  .lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: 4px; }
+  .lightbox-caption { color: #ccc; margin-top: 14px; font-size: 0.9rem; font-family: sans-serif; }
+  .lightbox-close {
+    position: absolute;
+    top: 20px; right: 30px;
+    color: white; font-size: 2rem; cursor: pointer;
+    background: none; border: none;
+    line-height: 1;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Decor Inspo Catalog</h1>
+  <p>The Uttrayan · Chakrata, Uttarakhand · Elevation ~7,000 ft</p>
+  <div class="hashtag">#HandaSharmaGaya · Nov 1–2, 2026</div>
+</header>
+
+<nav>
+  <a class="nav-sagan" href="#sagan">🌙 Evening Sagan (Nov 1)</a>
+  <a class="nav-haldi" href="#haldi">☀️ Haldi (Nov 2 Morning)</a>
+  <a class="nav-mehndi" href="#mehndi">💚 Mehndi (Nov 1 Afternoon)</a>
+  <a class="nav-shaadi" href="#shaadi">🌸 Main Wedding / Shaadi (Nov 2)</a>
+</nav>
+
+<!-- ============================================================ SAGAN -->
+<div class="section" id="sagan">
+  <div class="section-header">
+    <span class="section-tag tag-sagan">Nov 1 · 7:00 PM</span>
+    <h2>Evening Sagan</h2>
+  </div>
+  <p class="section-meta">Main Wedding Lawn · ~14,600 sqft · 150–200 guests · Sent by Tanisha</p>
+
+  <div class="subsection-label">Stage Options</div>
+  <div class="grid grid-2">
+    <div class="card" onclick="openLightbox(this)">
+      <img src="01_Sagan_Stage/sagan-stage-opt1-crystal-chandelier-neon.jpg" alt="Stage Option 1">
+      <div class="card-body">
+        <div class="card-title">Option 1 — Crystal Chandeliers + Neon Sign</div>
+        <div class="card-desc">Dark backdrop with fairy light curtain, two cascading crystal chandeliers, purple/white floral arch, neon hashtag sign, single sofa. Moody and glamorous.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="01_Sagan_Stage/sagan-stage-opt2-gold-arch-coin-curtain.jpg" alt="Stage Option 2">
+      <div class="card-body">
+        <div class="card-title">Option 2 — Gold Scallop Arch + Coin Curtain</div>
+        <div class="card-desc">Dark backdrop with gold disc/coin curtain, scalloped arch tops. Tanisha noted: "Not the flowers" — likes the arch and backdrop concept.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection-label">Venue Lighting / Canopy Options</div>
+  <div class="grid">
+    <div class="card" onclick="openLightbox(this)">
+      <img src="02_Sagan_Venue_Lighting/sagan-light-opt1-aerial-fairy-light-waves.jpg" alt="Lighting Option 1">
+      <div class="card-body">
+        <div class="card-title">Option 1 — Aerial Fairy Light Waves</div>
+        <div class="card-desc">Bird's-eye view: undulating fairy light canopy across an open lawn, tables below. Very dramatic when viewed from above.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="02_Sagan_Venue_Lighting/sagan-light-opt2-grand-fairy-light-canopy.jpg" alt="Lighting Option 2">
+      <div class="card-body">
+        <div class="card-title">Option 2 — Grand Fairy Light Tent Canopy</div>
+        <div class="card-desc">Full tent canopy of dense fairy lights above all dining tables. "Dreamyyy" overhead effect — very achievable at Uttrayan's open lawn.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="02_Sagan_Venue_Lighting/sagan-light-opt3-draped-fabric-fairy-ceiling.jpg" alt="Lighting Option 3">
+      <div class="card-body">
+        <div class="card-title">Option 3 — Draped Fabric + Fairy Light Ceiling</div>
+        <div class="card-desc">Horizontal fabric drapes on a covered terrace with fairy lights threaded between. More structured, good for a partially covered venue area.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="02_Sagan_Venue_Lighting/sagan-light-opt4-mirror-dancefloor-fairy-curtain.jpg" alt="Lighting Option 4">
+      <div class="card-body">
+        <div class="card-title">Option 4 — Mirror Dance Floor + Fairy Curtain</div>
+        <div class="card-desc">Vertical fairy light curtains from a canopy frame, mirrored LED dance floor reflecting all the lights. Stunning for the dancing segment.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="02_Sagan_Venue_Lighting/sagan-light-opt5-golden-sequin-canopy-lookingup.jpg" alt="Lighting Option 5">
+      <div class="card-body">
+        <div class="card-title">Option 5 — Golden Sequin Canopy (Looking Up)</div>
+        <div class="card-desc">Upward view of a mandap canopy: radiating cream fabric panels with fairy lights + gold sequin hanging below. Very regal.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="subsection-label">Entrance Options</div>
+  <div class="grid">
+    <div class="card" onclick="openLightbox(this)">
+      <img src="03_Sagan_Entrance/entrance-opt1-drape-tunnel-chandeliers-redcarpet.jpg" alt="Entrance Option 1">
+      <div class="card-body">
+        <div class="card-title">Entrance 1 — Drape Tunnel + Chandeliers + Red Carpet</div>
+        <div class="card-desc">Fabric-draped corridor entrance with crystal chandeliers hanging overhead, red carpet, fairy lights. Grand arrival moment.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="03_Sagan_Entrance/entrance-opt2-fairy-light-tunnel-crystal-chandelier.jpg" alt="Entrance Option 2">
+      <div class="card-body">
+        <div class="card-title">Entrance 2 — Fairy Light Tunnel + Crystal Chandelier</div>
+        <div class="card-desc">Open-air corridor at dusk, fairy lights on either side with a large crystal chandelier overhead. Elegant and airy. Tanya's pick.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="03_Sagan_Entrance/entrance-opt3-square-arch-fairy-light-corridor.jpg" alt="Entrance Option 3">
+      <div class="card-body">
+        <div class="card-title">Entrance 3 — Square Arch Fairy Light Corridor</div>
+        <div class="card-desc">Multiple square arches made of fairy lights creating a tunnel. More minimal and modern — no fabric, pure light.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================================================ HALDI -->
+<div class="section" id="haldi">
+  <div class="section-header">
+    <span class="section-tag tag-haldi">Nov 2 · 9:00 AM</span>
+    <h2>Haldi</h2>
+  </div>
+  <p class="section-meta">The Uttrayan · Intimate family ceremony · 50–80 guests · Sent by Tanya London + Tanisha</p>
+  <div class="note-box"><strong>Tanya's note:</strong> "Gol bartan ki jagah aise mein for seating" — prefers floor/diwan seating over traditional round vessels for guests.</div>
+
+  <div class="grid">
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt1-white-hanging-flowers-yellow-marigold-bohemian.jpg" alt="Haldi Option 1">
+      <div class="card-body">
+        <div class="card-title">Option 1 — White Hanging Flowers + Marigold (Bohemian)</div>
+        <div class="card-desc">Cascading white jasmine curtain from a large tree canopy, yellow marigold ground arch, bench seating. Outdoor, very organic.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt2-yellow-mandap-marigold-garlands-brass-thalis.jpg" alt="Haldi Option 2">
+      <div class="card-body">
+        <div class="card-title">Option 2 — Yellow Mandap + Marigold Garlands</div>
+        <div class="card-desc">Traditional yellow mandap structure with marigold hanging garlands and brass thali ritual setup below. Classic Haldi backdrop.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt3-orange-pink-backdrop-marigold-bride.jpg" alt="Haldi Option 3">
+      <div class="card-body">
+        <div class="card-title">Option 3 — Orange/Pink Backdrop + Marigold</div>
+        <div class="card-desc">Vibrant orange sheer + marigold garland backdrop with brass flower bowls on the floor. Bold, colorful, very photogenic. Bride in pink lehenga.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt4-white-flower-wall-marigold-bride-outdoor.jpg" alt="Haldi Option 4">
+      <div class="card-body">
+        <div class="card-title">Option 4 — White Flower Wall + Marigold (Outdoor)</div>
+        <div class="card-desc">Large white rose/flower wall backdrop with marigold hanging garlands, white urns with marigold arrangements. Clean and elegant daytime look.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt5-yellow-arch-tassel-golden-bathtub.jpg" alt="Haldi Option 5">
+      <div class="card-body">
+        <div class="card-title">Option 5 — Yellow Arch + Tassel + Golden Tub</div>
+        <div class="card-desc">Yellow marigold/tassel arch with a decorative circular golden tub in center. Quirky and fun — very Instagram-ready Haldi setup.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt6-yellow-marigold-arch-tree-ottoman-seating.jpg" alt="Haldi Option 6">
+      <div class="card-body">
+        <div class="card-title">Option 6 — Marigold Tree Arch + Ottoman Seating</div>
+        <div class="card-desc">Marigold garlands draped from a large tree, white bench center, white and tan ottoman seating for guests. Natural and serene.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt7-white-garland-wall-greenery-diwan.jpg" alt="Haldi Option 7">
+      <div class="card-body">
+        <div class="card-title">Option 7 — White Garland Wall + Greenery + Diwan</div>
+        <div class="card-desc">White jasmine curtain wall with green trim and yellow accent flowers, wooden diwan seating. Indoor/terrace friendly setup.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt8-white-yellow-garland-wall-outdoor-sky.jpg" alt="Haldi Option 8">
+      <div class="card-body">
+        <div class="card-title">Option 8 — White/Yellow Garland Wall + Open Sky</div>
+        <div class="card-desc">Similar hanging garland wall but against an open sky backdrop (sea view in inspiration). Against Chakrata hills this would be stunning.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt9-flower-curtain-pink-traditional-kadhai.jpg" alt="Haldi Option 9">
+      <div class="card-body">
+        <div class="card-title">Option 9 — Flower Curtain + Pink + Traditional Kadhai</div>
+        <div class="card-desc">Neutral jute/cream backdrop with pink flower garlands and traditional Haldi kadhai setup. Simpler, more intimate feel.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt10-yellow-garland-umbrella-diwan-chevron-floor.jpg" alt="Haldi Option 10">
+      <div class="card-body">
+        <div class="card-title">Option 10 — Yellow Garlands + Umbrella + Diwan</div>
+        <div class="card-desc">Yellow marigold/champagne garland backdrop with printed fabric umbrellas, diwan seating, chevron runner. Rajasthani-inspired.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="04_Haldi/haldi-opt11-flower-curtain-outdoor-brass-vessels.jpg" alt="Haldi Option 11">
+      <div class="card-body">
+        <div class="card-title">Option 11 — Flower Curtain + Outdoor + Brass Vessels</div>
+        <div class="card-desc">Outdoor version of Option 9 (same vendor: DecorByKrishna.com). Pink + cream jute curtain with brass ritual vessels and tall gold stands.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================================================ MEHNDI -->
+<div class="section" id="mehndi">
+  <div class="section-header">
+    <span class="section-tag tag-mehndi">Nov 1 · 12:00 PM</span>
+    <h2>Mehndi (Din)</h2>
+  </div>
+  <p class="section-meta">Lower Garden Lawn · Daytime · 150–200 guests · Sent by Tanisha</p>
+  <div class="note-box"><strong>Tanya's note on Option 2:</strong> "This is also nice but looks western — won't go with ghagra." Keep that in mind when shortlisting.</div>
+
+  <div class="grid">
+    <div class="card" onclick="openLightbox(this)">
+      <img src="05_Mehndi/mehndi-opt1-yellow-teepee-marigold-bride-seating.jpg" alt="Mehndi Option 1">
+      <div class="card-body">
+        <div class="card-title">Option 1 — Yellow Teepee + Marigold (Bride's Throne)</div>
+        <div class="card-desc">Bright yellow teepee tent with marigold top flowers, yellow cushion platform seating for the bride. Daytime outdoor, very festive. Tanya's pick.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="05_Mehndi/mehndi-opt2-colorful-tent-multicolor-western-style.jpg" alt="Mehndi Option 2">
+      <div class="card-body">
+        <div class="card-title">Option 2 — Colorful Tent (Western Style) ⚠️</div>
+        <div class="card-desc">Multicolor festive tent with a bride in a colorful contemporary lehenga. Tanya flagged: "looks western, won't go with ghagra." Probably skip.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="05_Mehndi/mehndi-opt3-white-teepee-colorful-floral-sofa.jpg" alt="Mehndi Option 3">
+      <div class="card-body">
+        <div class="card-title">Option 3 — White Teepee + Colorful Floral + Sofa</div>
+        <div class="card-desc">Soft pink/blush teepee with colorful flower accents at base, white sofa seating around it. More neutral backdrop — versatile with any outfit color.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="05_Mehndi/mehndi-opt4-white-teepee-marigold-yellow-torani.jpg" alt="Mehndi Option 4">
+      <div class="card-body">
+        <div class="card-title">Option 4 — White Teepee + Yellow Marigold (Torani)</div>
+        <div class="card-desc">Cream/white teepee with marigold + yellow flower accents at poles, a low table with oranges/decor. Very mountain-appropriate, earthy and warm.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="05_Mehndi/mehndi-opt5-hot-pink-mandap-marigold-garlands.jpg" alt="Mehndi Option 5">
+      <div class="card-body">
+        <div class="card-title">Option 5 — Hot Pink Mandap + Marigold Garlands</div>
+        <div class="card-desc">Bold hot pink draped mandap with dense marigold garland ring overhead, mixed floral clusters. High-contrast and vibrant — more traditional mandap format.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<!-- ============================================================ SHAADI -->
+<div class="section" id="shaadi">
+  <div class="section-header">
+    <span class="section-tag tag-shaadi">Nov 2 · 4:00 PM</span>
+    <h2>Main Wedding / Shaadi</h2>
+  </div>
+  <p class="section-meta">Main Wedding Lawn · Sundowner · 150–200 guests · Sent by Tanisha at 10:45 PM · Parth: "Bahot sahii 🔥 Dreamyyy"</p>
+  <div class="note-box"><strong>Context:</strong> These 3 are mountain wedding inspiration photos — white/blush florals against a Himalayan backdrop. The Uttrayan at 7,000 ft has comparable mountain scenery.</div>
+
+  <div class="grid">
+    <div class="card" onclick="openLightbox(this)">
+      <img src="06_Main_Wedding_Shaadi/shaadi-opt1-mountain-couple-white-floral-arch.jpg" alt="Shaadi Option 1">
+      <div class="card-body">
+        <div class="card-title">Option 1 — Couple + White Floral Arch + Mountains</div>
+        <div class="card-desc">Couple on a white circular mandap platform surrounded by white and blush roses, mountains + blue sky backdrop. Minimal, ethereal, grand.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="06_Main_Wedding_Shaadi/shaadi-opt2-mountain-blush-white-floral-aisle-mandap.jpg" alt="Shaadi Option 2">
+      <div class="card-body">
+        <div class="card-title">Option 2 — Blush/White Floral Aisle + Mountain Mandap</div>
+        <div class="card-desc">Full aisle lined with dense white/blush floral columns, semi-circular floral mandap backdrop, mountain range view. Very dramatic processional.</div>
+      </div>
+    </div>
+    <div class="card" onclick="openLightbox(this)">
+      <img src="06_Main_Wedding_Shaadi/shaadi-opt3-mountain-aerial-ceremony-curved-seating.jpg" alt="Shaadi Option 3">
+      <div class="card-body">
+        <div class="card-title">Option 3 — Aerial View: Curved Seating + Mountain Venue</div>
+        <div class="card-desc">Bird's-eye view of an outdoor ceremony with curved guest seating rows, white floral mandap center, mountain backdrop. Shows how a large ceremony can be arranged on a terrace/lawn.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="height: 60px;"></div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+<script>
+function openLightbox(card) {
+  const img = card.querySelector('img');
+  const title = card.querySelector('.card-title').textContent;
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox-caption').textContent = title;
+  document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('active');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+
+</body>
+</html>

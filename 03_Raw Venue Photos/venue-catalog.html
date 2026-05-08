@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raw Venue Photos — The Uttrayan, Chakrata</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8fafc;
+    color: #1e293b;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    background: #1e293b;
+    color: #fff;
+    padding: 24px 32px 16px;
+  }
+  .site-header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.3px; }
+  .site-header p  { font-size: 0.85rem; color: #94a3b8; margin-top: 4px; }
+
+  /* ── Sticky nav ── */
+  .sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    gap: 2px;
+    background: #0f172a;
+    padding: 0 32px;
+  }
+  .nav-btn {
+    padding: 12px 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background: transparent;
+    color: #94a3b8;
+    border-bottom: 3px solid transparent;
+    transition: all 0.15s;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .nav-btn:hover { color: #e2e8f0; }
+  .nav-btn.main-lawn  { border-color: #16a34a; }
+  .nav-btn.mehndi     { border-color: #7c3aed; }
+  .nav-btn.haldi      { border-color: #d97706; }
+  .nav-btn.hotel      { border-color: #64748b; }
+  .nav-btn.active     { color: #fff; }
+
+  /* ── Section wrapper ── */
+  .section {
+    padding: 36px 32px;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+  .event-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    margin-top: 3px;
+  }
+  .badge-main-lawn  { background: #dcfce7; color: #15803d; }
+  .badge-mehndi     { background: #ede9fe; color: #6d28d9; }
+  .badge-haldi      { background: #fef3c7; color: #b45309; }
+  .badge-hotel      { background: #f1f5f9; color: #475569; }
+
+  .section h2 { font-size: 1.25rem; font-weight: 700; }
+  .section .subtitle {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+
+  /* ── Spec pills ── */
+  .spec-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 14px 0 24px;
+  }
+  .spec-pill {
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+  }
+
+  /* ── Photo grid ── */
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+  }
+  .photo-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .photo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  }
+  .photo-card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+  .photo-caption {
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    color: #64748b;
+    line-height: 1.4;
+  }
+  .photo-caption strong {
+    display: block;
+    color: #1e293b;
+    font-size: 0.82rem;
+    margin-bottom: 2px;
+  }
+
+  /* ── Note box ── */
+  .note-box {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.83rem;
+    color: #92400e;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .note-box strong { display: block; margin-bottom: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  .info-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 0.83rem;
+    color: #1e40af;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  .info-box strong { display: block; margin-bottom: 4px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ── Divider ── */
+  .subsection-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #94a3b8;
+    margin: 28px 0 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* ── Lightbox ── */
+  #lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 20px;
+  }
+  #lightbox.open { display: flex; }
+  #lightbox img {
+    max-width: 90vw;
+    max-height: 82vh;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  #lb-caption {
+    color: #cbd5e1;
+    font-size: 0.85rem;
+    margin-top: 16px;
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.5;
+  }
+  #lb-close {
+    position: fixed;
+    top: 20px;
+    right: 28px;
+    color: #fff;
+    font-size: 2rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    line-height: 1;
+    opacity: 0.8;
+  }
+  #lb-close:hover { opacity: 1; }
+
+  /* ── Spatial overview box ── */
+  .spatial-map {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .spatial-item {
+    text-align: center;
+    padding: 16px 12px;
+    border-radius: 8px;
+  }
+  .spatial-item.main-lawn { background: #f0fdf4; border: 1px solid #bbf7d0; }
+  .spatial-item.mehndi    { background: #f5f3ff; border: 1px solid #ddd6fe; }
+  .spatial-item.haldi     { background: #fffbeb; border: 1px solid #fde68a; }
+  .spatial-item .icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .spatial-item .label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #475569; }
+  .spatial-item .detail { font-size: 0.78rem; color: #64748b; margin-top: 4px; line-height: 1.4; }
+
+  footer {
+    text-align: center;
+    padding: 32px;
+    font-size: 0.78rem;
+    color: #94a3b8;
+  }
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <h1>The Uttrayan — Raw Venue Photos</h1>
+  <p>Chakrata, Uttarakhand &nbsp;·&nbsp; Photographed May 7, 2026 &nbsp;·&nbsp; #HandaSharmaGaya</p>
+</div>
+
+<nav class="sticky-nav">
+  <button class="nav-btn main-lawn active" onclick="scrollTo('main-lawn')">🌿 Main Lawn — Sagan &amp; Shaadi</button>
+  <button class="nav-btn mehndi" onclick="scrollTo('mehndi')">💜 Upper Terrace — Mehndi</button>
+  <button class="nav-btn haldi" onclick="scrollTo('haldi')">💛 Front Lawn — Haldi</button>
+  <button class="nav-btn hotel" onclick="scrollTo('hotel')">🏛 Hotel Veranda</button>
+</nav>
+
+<!-- ── Spatial Overview ── -->
+<div style="padding: 28px 32px 0;">
+  <p style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#94a3b8; margin-bottom:12px;">Three Distinct Event Spaces</p>
+  <div class="spatial-map">
+    <div class="spatial-item main-lawn">
+      <div class="icon">🌿</div>
+      <div class="label">Main Lawn</div>
+      <div class="detail">Sagan (Nov 1 evening)<br>Shaadi (Nov 2 sundowner)<br>Massive open ground<br>~14,600 sq ft</div>
+    </div>
+    <div class="spatial-item mehndi">
+      <div class="icon">💜</div>
+      <div class="label">Upper Terrace</div>
+      <div class="detail">Day Mehndi (Nov 1 afternoon)<br>Mosaic tile floor<br>180° mountain panorama<br>Elevated with railing</div>
+    </div>
+    <div class="spatial-item haldi">
+      <div class="icon">💛</div>
+      <div class="label">Front Lawn</div>
+      <div class="detail">Haldi (Nov 2 morning)<br>Geometric carpet path<br>White tent + red drapes<br>Crystal chandeliers inside</div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION A: MAIN LAWN -->
+<!-- ════════════════════════════════════════════ -->
+<section class="section" id="main-lawn">
+  <div class="section-header">
+    <span class="event-badge badge-main-lawn">Sagan &amp; Shaadi</span>
+    <div>
+      <h2>Main Lawn — Sagan &amp; Shaadi</h2>
+      <p class="subtitle">The primary event space: a massive open ground at the back of the property. Sagan evening (Nov 1, 7 PM) and Main Wedding (Nov 2, 4 PM sundowner).</p>
+    </div>
+  </div>
+
+  <div class="spec-pills">
+    <span class="spec-pill">🌍 Raw dirt/mud surface — no grass yet</span>
+    <span class="spec-pill">📐 ~14,600 sq ft open area</span>
+    <span class="spec-pill">🏔 Himalayan mountain backdrop on multiple sides</span>
+    <span class="spec-pill">🏨 Hotel building flanks the left edge</span>
+    <span class="spec-pill">🌄 Open sky — ideal for sundowner lighting</span>
+    <span class="spec-pill">🚛 Currently under construction (trucks visible)</span>
+  </div>
+
+  <div class="info-box">
+    <strong>📐 Planning Note</strong>
+    The lawn is photographed empty and raw — this is pre-construction. The surface will be finished before November. These shots capture the full scale and proportions you're working with. The hotel building on the left and the mountain ridgeline to the right/front are the permanent features to plan decor around.
+  </div>
+
+  <p class="subsection-title">Ground-Level Views — Full Scale</p>
+  <div class="photo-grid">
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.28 (3).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Wide from entrance side</strong>Raw dirt ground, trucks parked, gate/barrier visible. Construction debris on edges. Mountain ridge in background.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.28 (4).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Towards the gate end</strong>Hotel building visible on right, metal gate/railing at boundary. Shows relationship to neighboring buildings.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (1).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Ground level, trucks parked</strong>Confirms massive open area. Soft-red-roof building of neighboring property visible across the valley.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (2).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Towards the far boundary</strong>Open dirt ground. Scale visible — trucks look small against the full extent of the space.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (3).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — From near the entrance</strong>Looking toward the valley side. Wide sky gives depth. Pine-covered hillside in background.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (4).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Gate side corner</strong>Metal gate/railing visible on right. Boundary wall with neighboring property. Road beyond.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (5).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Hotel building on left</strong>Best shot showing the hotel building's full facade alongside the open lawn. Trucks parked on both sides. Valley + mountains visible ahead.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (6).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Hotel building + open expanse</strong>Hotel multi-storey white building with balconies flanking the left. Yellow truck parked. Long sightline across the ground.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (7).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Opposite boundary corner</strong>Red truck parked. Metal scaffolding pole visible — early stage of tent or lighting structure. Neighboring buildings visible in distance.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (8).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Looking from hotel-facing end</strong>Hotel staircase visible on far left. Open sky. Mountain range visible on horizon. Red truck on the right.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Wide panoramic view</strong>Widest ground-level shot. Stone walls and buildings on right edge, full mountain backdrop, confirms the scale of the entire space front to back.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Valley-facing boundary</strong>Looking towards the valley — the fencing/railing on the outer edge. Open Himalayan ranges in background. This is where the stage backdrop or floral wall would go.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30 (1).jpeg" alt="">
+      <div class="photo-caption"><strong>Hotel building side — ground level</strong>Close-up of hotel exterior staircase and balcony structure as it meets the ground. Dirt path connecting hotel to lawn. Shows how guests flow in from the hotel side.</div>
+    </div>
+
+  </div>
+
+  <p class="subsection-title">Elevated Perspectives — From Hotel Staircase</p>
+  <div class="photo-grid">
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30 (2).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Elevated from hotel staircase</strong>Shot looking down from upper floor staircase. Gives a planner's-eye view of the full ground extent, neighboring buildings across.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30 (3).jpeg" alt="">
+      <div class="photo-caption"><strong>Main Lawn — Steel staircase vantage point</strong>Steel railing frame in foreground, trucks below, and the full lawn visible. Best elevated perspective of the space from the hotel side.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION B: UPPER TERRACE MEHNDI -->
+<!-- ════════════════════════════════════════════ -->
+<section class="section" id="mehndi">
+  <div class="section-header">
+    <span class="event-badge badge-mehndi">Day Mehndi — Nov 1</span>
+    <div>
+      <h2>Upper Terrace — Day Mehndi</h2>
+      <p class="subtitle">The elevated tiled terrace. Day Mehndi function (Nov 1, ~12 PM). Mosaic tile floor with iron railing and sweeping 180° mountain views.</p>
+    </div>
+  </div>
+
+  <div class="spec-pills">
+    <span class="spec-pill">🟤 White/grey mosaic tile floor with black grid pattern</span>
+    <span class="spec-pill">⬛ Black iron railing balustrade</span>
+    <span class="spec-pill">🏔 180° Himalayan panorama unobstructed</span>
+    <span class="spec-pill">⬆ Elevated above front lawn</span>
+    <span class="spec-pill">🏛 Covered hotel veranda adjacent</span>
+  </div>
+
+  <div class="note-box">
+    <strong>⚠ Only 2 raw photos of this space</strong>
+    The upper terrace Mehndi area has fewer shots than the other spaces. These two shots confirm the floor type and the panoramic view. For additional reference, see <code>01_Venue Photos/B_Upper_Terrace_Mehndi/</code> which has 13 photos from a previous wedding setup showing how this space looks with decor installed.
+  </div>
+
+  <div class="photo-grid">
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27.jpeg" alt="">
+      <div class="photo-caption"><strong>Upper Terrace — Empty, mosaic tile floor</strong>Classic mosaic tile floor (white/grey with black grid lines), black iron balustrade railing. Empty and raw. 180° mountain panorama opening out — layered Himalayan ridgelines visible.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg" alt="">
+      <div class="photo-caption"><strong>Upper Terrace — Mountain panorama</strong>Shot looking out from the terrace. Full 180° sweep of the mountain range at altitude. The sky and range give this space an unmatched backdrop for a daytime Mehndi.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION C: FRONT LAWN HALDI -->
+<!-- ════════════════════════════════════════════ -->
+<section class="section" id="haldi">
+  <div class="section-header">
+    <span class="event-badge badge-haldi">Haldi — Nov 2</span>
+    <div>
+      <h2>Front Lawn — Haldi</h2>
+      <p class="subtitle">The front courtyard of the hotel. Haldi function (Nov 2, ~9 AM). Features a distinctive geometric carpet path, white tent with red drapes, and crystal chandeliers inside.</p>
+    </div>
+  </div>
+
+  <div class="spec-pills">
+    <span class="spec-pill">🔷 Black/white/pink geometric triangle carpet</span>
+    <span class="spec-pill">⛺ White tent with red drape panels</span>
+    <span class="spec-pill">💎 Crystal chandeliers inside tent</span>
+    <span class="spec-pill">🪑 Gold chiavari chairs + tables under tent</span>
+    <span class="spec-pill">🏰 Hotel building on left side</span>
+    <span class="spec-pill">🚪 Stone wall + gate at the far end</span>
+    <span class="spec-pill">💧 Small decorative pool/water feature near entrance</span>
+  </div>
+
+  <p class="subsection-title">Ground-Level — Carpet &amp; Open Courtyard</p>
+  <div class="photo-grid">
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.27 (2).jpeg" alt="">
+      <div class="photo-caption"><strong>Front Courtyard — From hotel veranda</strong>View from the covered hotel veranda looking down into the front courtyard. Red drape tent being assembled in the middle. Geometric carpet visible on the ground. Small decorative pool/water feature at near side.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.27 (3).jpeg" alt="">
+      <div class="photo-caption"><strong>Front Courtyard — Decorative water feature</strong>Small ornamental pool or water feature near the hotel entrance, adjacent to the Haldi space. Stone/tiled surround. Adds a decorative element to the entrance approach.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.27 (4).jpeg" alt="">
+      <div class="photo-caption"><strong>Haldi Area — Geometric carpet, ground level</strong>The signature black/white/pink triangle geometric carpet in full view from the ground. Red drape tent structure rising in background. Stone boundary wall on the side.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.27 (5).jpeg" alt="">
+      <div class="photo-caption"><strong>Haldi Area — Full carpet path, wide shot</strong>The best ground-level overview. Hotel building on the left, geometric carpet running the full length of the front lawn, stone gate visible at the far end. Confirms the space from end to end.</div>
+    </div>
+
+  </div>
+
+  <p class="subsection-title">Tent Interior</p>
+  <div class="photo-grid">
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg" alt="">
+      <div class="photo-caption"><strong>Haldi Tent — Interior setup in progress</strong>White fabric ceiling with crystal chandeliers. Red drape panels on the sides. Circular tables being arranged. Gold chiavari chairs. This is how the seated Haldi space will look.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (1).jpeg" alt="">
+      <div class="photo-caption"><strong>Haldi Tent — Wider interior view</strong>Full spatial extent of the tent visible. Multiple chandeliers. Red drapes wrapping the sides. Tables arranged in the centre. Shows the scale of the seated area under the tent.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (2).jpeg" alt="">
+      <div class="photo-caption"><strong>Haldi Tent — Widest interior shot</strong>Full breadth of the tent from one end. Multiple table configurations visible. Confirms seating capacity and arrangement possibilities.</div>
+    </div>
+
+  </div>
+
+  <p class="subsection-title">Aerial Bird's-Eye Views</p>
+  <div class="info-box">
+    <strong>📷 Drone / Overhead Shots</strong>
+    These aerials give the best spatial understanding of the Haldi front lawn — the carpet footprint, tent position, relationship to the hotel building and the gate. Invaluable for decor planning from above.
+  </div>
+  <div class="photo-grid">
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (7).jpeg" alt="">
+      <div class="photo-caption"><strong>Aerial — Front lawn overview</strong>Bird's-eye view of the complete Haldi space. Geometric carpet footprint, tent positioned in the centre, stone walls and gate at far end clearly visible.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (8).jpeg" alt="">
+      <div class="photo-caption"><strong>Aerial — Carpet + tent relationship</strong>How the carpet path leads to the tent entrance. Stone walls on both sides. Hotel veranda visible at the top of frame. Full spatial layout.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (9).jpeg" alt="">
+      <div class="photo-caption"><strong>Aerial — Full property context</strong>Wide aerial showing the Haldi front lawn in context with the surrounding property. Confirms proportions relative to road, gate, and hotel footprint.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28 (10).jpeg" alt="">
+      <div class="photo-caption"><strong>Aerial — Carpet path close-up from above</strong>Tighter aerial focusing on the geometric carpet pattern. The triangle motif visible clearly from above. Shows how far the carpet extends from hotel entrance to tent.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.29.jpeg" alt="">
+      <div class="photo-caption"><strong>Aerial — Transition / overview</strong>Additional aerial perspective of the front lawn and surrounding property. Context shot showing the full relationship between the event spaces.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- SECTION D: HOTEL VERANDA -->
+<!-- ════════════════════════════════════════════ -->
+<section class="section" id="hotel">
+  <div class="section-header">
+    <span class="event-badge badge-hotel">Reference</span>
+    <div>
+      <h2>Hotel Veranda — Reference Only</h2>
+      <p class="subtitle">The covered marble-floored veranda of the hotel building. Not an event space — shown for spatial reference as it connects the hotel interior to the Haldi courtyard.</p>
+    </div>
+  </div>
+
+  <div class="spec-pills">
+    <span class="spec-pill">🪨 Marble/granite tiled floor</span>
+    <span class="spec-pill">🏛 Carved wooden or ornate columns</span>
+    <span class="spec-pill">⬛ Iron railing facing the courtyard</span>
+    <span class="spec-pill">🔭 Views onto the Haldi front lawn below</span>
+  </div>
+
+  <div class="photo-grid">
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="D_Hotel_Veranda_Reference/WhatsApp Image 2026-05-07 at 17.44.28 (5).jpeg" alt="">
+      <div class="photo-caption"><strong>Hotel Veranda — Looking out to Haldi area</strong>Covered marble veranda. Iron railing visible. This is the transition space between hotel rooms and the Haldi front courtyard. Not a primary event space.</div>
+    </div>
+
+    <div class="photo-card" onclick="openLb(this)">
+      <img src="D_Hotel_Veranda_Reference/WhatsApp Image 2026-05-07 at 17.44.28 (6).jpeg" alt="">
+      <div class="photo-caption"><strong>Hotel Veranda — Interior side</strong>Second veranda reference shot showing the columns and covered walkway structure. Connects to the upper terrace Mehndi area on the other side of the hotel.</div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  The Uttrayan · Chakrata, Uttarakhand · Nov 1–2, 2026 · #HandaSharmaGaya<br>
+  Photos taken May 7, 2026 — raw pre-construction state
+</footer>
+
+<!-- ── Lightbox ── -->
+<div id="lightbox" onclick="closeLb(event)">
+  <button id="lb-close" onclick="closeLb()">×</button>
+  <img id="lb-img" src="" alt="">
+  <div id="lb-caption"></div>
+</div>
+
+<script>
+  function openLb(card) {
+    const img = card.querySelector('img');
+    const cap = card.querySelector('.photo-caption');
+    document.getElementById('lb-img').src = img.src;
+    document.getElementById('lb-caption').innerHTML = cap.innerHTML;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLb(e) {
+    if (!e || e.target === document.getElementById('lightbox') || e.target.id === 'lb-close') {
+      document.getElementById('lightbox').classList.remove('open');
+    }
+  }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb({ target: document.getElementById('lightbox') }); });
+
+  function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  // Highlight nav on scroll
+  const sections = ['main-lawn','mehndi','haldi','hotel'];
+  const navBtns = document.querySelectorAll('.nav-btn');
+  window.addEventListener('scroll', () => {
+    let current = sections[0];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && el.getBoundingClientRect().top < 120) current = id;
+    });
+    navBtns.forEach(b => {
+      b.classList.remove('active');
+      if (b.getAttribute('onclick') && b.getAttribute('onclick').includes(current)) b.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
