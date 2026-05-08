@@ -789,4 +789,116 @@ function renderCard(id) {
   if (status === 'top') {
     card.classList.add('top-pick');
     const b = document.createElement('div');
-    b.class
+    b.className = 'card-status-badge badge-top';
+    b.textContent = '⭐ Top Pick';
+    card.querySelector('.card-img-wrap').appendChild(b);
+  } else if (status === 'short') {
+    card.classList.add('shortlisted');
+    const b = document.createElement('div');
+    b.className = 'card-status-badge badge-short';
+    b.textContent = '✓ Shortlisted';
+    card.querySelector('.card-img-wrap').appendChild(b);
+  }
+  // Pairing section — inject venue thumbs when a card is selected
+  const meta = cardMeta[id];
+  if (!meta) return;
+  let pairDiv = card.querySelector('.card-pairing');
+  if (status) {
+    if (!pairDiv) {
+      pairDiv = document.createElement('div');
+      pairDiv.className = 'card-pairing';
+      const evKey = meta.event.toLowerCase();
+      const photos = venueData[evKey] ? venueData[evKey].photos : [];
+      pairDiv.innerHTML = '<div class="pairing-label">📸 Pair with a venue photo:</div><div class="pairing-thumbs" id="thumbs-'+id+'"></div>';
+      card.appendChild(pairDiv);
+      const tc = pairDiv.querySelector('.pairing-thumbs');
+      photos.forEach((p,i)=>{
+        const img = document.createElement('img');
+        img.src = p.src;
+        img.className = 'pairing-thumb';
+        img.title = p.cap;
+        img.onclick = ()=>setPairing(id,i);
+        tc.appendChild(img);
+      });
+    }
+    pairDiv.style.display = 'block';
+    pairDiv.querySelectorAll('.pairing-thumb').forEach((img,i)=>{
+      img.classList.remove('pair-active-top','pair-active-short');
+      if (i === pairings[id]) img.classList.add(status==='top'?'pair-active-top':'pair-active-short');
+    });
+  } else if (pairDiv) {
+    pairDiv.style.display = 'none';
+  }
+}
+
+function updateBar() {
+  const tops  = Object.values(picks).filter(v=>v==='top').length;
+  const shorts = Object.values(picks).filter(v=>v==='short').length;
+  const total = tops + shorts;
+  const el = document.getElementById('bar-count');
+  if (el) el.textContent = total;
+  const btn = document.getElementById('btn-summary');
+  if (btn) btn.disabled = (total === 0);
+}
+
+function openSummary() { buildSummary(); }
+
+function buildSummary() {
+  const container = document.getElementById('summary-content');
+  const byEvent = {};
+  Object.entries(picks).forEach(([id,status])=>{
+    const meta = cardMeta[id]; if (!meta) return;
+    if (!byEvent[meta.event]) byEvent[meta.event] = [];
+    byEvent[meta.event].push({id,status,meta});
+  });
+  if (!Object.keys(byEvent).length) {
+    container.innerHTML = '<div class="summary-empty">No picks or shortlists yet — select some options first.</div>';
+    document.getElementById('summary-overlay').classList.add('open');
+    return;
+  }
+  const order  = ['Sagan','Mehndi','Haldi','Shaadi'];
+  const labels = {
+    Sagan:'🌙 Evening Sagan · Nov 1',
+    Mehndi:'🌿 Day Mehndi · Nov 1',
+    Haldi:'💛 Haldi · Nov 2',
+    Shaadi:'💚 Shaadi · Nov 2'
+  };
+  let html = '';
+  order.forEach(ev=>{
+    const cards = byEvent[ev]; if (!cards||!cards.length) return;
+    html += '<div class="summary-section"><h3>'+labels[ev]+'</h3><div class="summary-grid">';
+    cards.forEach(({id,status,meta})=>{
+      const evKey   = ev.toLowerCase();
+      const pairIdx = pairings[id];
+      const vPhoto  = (pairIdx!=null && venueData[evKey]) ? venueData[evKey].photos[pairIdx] : null;
+      const bc = status==='top' ? 'top'     : 'short';
+      const bl = status==='top' ? '⭐ Top Pick' : '✓ Shortlisted';
+      html += '<div class="sum-card"><div class="sum-photos">';
+      if (vPhoto) {
+        html += '<div class="sum-photo"><img src="'+vPhoto.src+'" alt=""><div class="sum-photo-lbl lbl-venue">📍 Venue</div></div>';
+      } else {
+        html += '<div class="sum-photo" style="background:#f1f5f9;display:flex;align-items:center;justify-content:center;min-height:130px"><div style="color:#94a3b8;font-size:0.7rem;text-align:center;padding:8px">No venue<br>photo paired<br>yet</div><div class="sum-photo-lbl lbl-venue">📍 Venue</div></div>';
+      }
+      html += '<div class="sum-photo"><img src="'+meta.img+'" alt=""><div class="sum-photo-lbl lbl-decor">✨ Decor</div></div>';
+      html += '</div><div class="sum-footer">';
+      html += '<div class="sum-title">'+meta.title+'</div>';
+      html += '<div class="sum-cat">'+ev+' · '+meta.cat+'</div>';
+      html += '<span class="sum-badge '+bc+'">'+bl+'</span>';
+      html += '</div></div>';
+    });
+    html += '</div></div>';
+  });
+  container.innerHTML = html;
+  document.getElementById('summary-overlay').classList.add('open');
+}
+
+function closeSummaryDirect() {
+  document.getElementById('summary-overlay').classList.remove('open');
+}
+
+// ── Page load: restore saved picks & init bar ──
+Object.keys(cardMeta).forEach(id => renderCard(id));
+updateBar();
+</script>
+</body>
+</html>
