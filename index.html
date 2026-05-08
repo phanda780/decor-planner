@@ -164,6 +164,71 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   .summary-modal{max-height:none;box-shadow:none;border-radius:0;padding:16px}
   .sum-card{break-inside:avoid}
 }
+
+/* ── Mobile ── */
+@media(max-width:760px){
+  /* Fix: kill sticky so venue photo doesn't float over decor cards */
+  .venue-panel{position:static !important;top:auto !important;margin-bottom:14px}
+
+  /* Tighten global spacing */
+  .event-inner{padding:10px 12px}
+  body{padding-bottom:68px}
+
+  /* Header */
+  .site-header{padding:10px 14px;flex-wrap:wrap;gap:8px}
+  .site-header h1{font-size:0.95rem}
+  .header-meta{display:none}
+
+  /* Tabs — horizontal scroll, slightly bigger tap targets */
+  .event-tab{padding:10px 14px;font-size:0.75rem}
+
+  /* Hero — compact */
+  .event-hero{padding:10px 14px;margin-bottom:12px}
+  .event-hero h2{font-size:1rem}
+  .event-hero .meta{font-size:0.72rem}
+  .event-hero .pills{gap:4px}
+  .event-hero .pill{font-size:0.65rem;padding:2px 7px}
+
+  /* Venue carousel — shorter on mobile */
+  .venue-carousel img{height:200px}
+
+  /* Decor grid — 2 columns on phone, 1 on very small */
+  .options-grid{grid-template-columns:repeat(2,1fr);gap:8px}
+  @media(max-width:420px){.options-grid{grid-template-columns:1fr}}
+
+  /* Cards — tighter */
+  .card-img-wrap img{height:140px}
+  .card-body{padding:7px 9px}
+  .card-title{font-size:0.75rem}
+  .card-desc{font-size:0.67rem}
+  .card-actions{padding:6px 9px;gap:4px}
+  .btn-pick,.btn-short{font-size:0.67rem;padding:5px 3px}
+
+  /* Pairing thumbs — bigger touch targets */
+  .pairing-thumb{height:52px;width:76px}
+  .card-pairing{padding:6px 9px 8px}
+
+  /* Lightbox — stack venue + decor vertically on mobile */
+  #lb-overlay{padding:10px}
+  .lb-panels{flex-direction:column;gap:8px;overflow-y:auto;max-height:88vh}
+  .lb-panel img,.lb-single{max-height:38vh}
+  .lb-header{font-size:0.68rem;margin-bottom:6px}
+  #lb-close{top:8px;right:12px;font-size:1.4rem}
+
+  /* Vendor summary modal */
+  .summary-modal{padding:16px;border-radius:8px}
+  .summary-grid{grid-template-columns:1fr 1fr;gap:8px}
+  @media(max-width:480px){.summary-grid{grid-template-columns:1fr}}
+  .sum-photo img{height:100px}
+
+  /* Sticky bar */
+  .sticky-bar{padding:10px 16px}
+  .sticky-bar .count{font-size:0.75rem}
+  .btn-summary{padding:8px 14px;font-size:0.75rem}
+
+  /* Info/note boxes */
+  .info-box,.note-box{font-size:0.72rem;padding:8px 12px}
+}
 </style>
 </head>
 <body>
@@ -756,60 +821,4 @@ function renderCard(id) {
 function updateBar() {
   const count = Object.keys(picks).length;
   document.getElementById('bar-count').textContent = count;
-  document.getElementById('btn-summary').disabled = count === 0;
-}
-
-// Restore on load
-Object.keys(picks).forEach(id => renderCard(id));
-updateBar();
-
-// ── Vendor Summary ──
-function openSummary() {
-  const ORDER = ['Sagan','Mehndi','Haldi','Shaadi'];
-  const COLORS = {Sagan:'#1e40af',Mehndi:'#6d28d9',Haldi:'#b45309',Shaadi:'#15803d'};
-  const EMOJIS = {Sagan:'🌙',Mehndi:'🌿',Haldi:'💛',Shaadi:'💚'};
-
-  // Group picks by event
-  const byEvent = {};
-  Object.entries(picks).forEach(([id, status]) => {
-    const meta = cardMeta[id];
-    if (!meta) return;
-    if (!byEvent[meta.event]) byEvent[meta.event] = {top:[],short:[]};
-    byEvent[meta.event][status === 'top' ? 'top' : 'short'].push({id, status, ...meta});
-  });
-
-  let html = '';
-  ORDER.forEach(ev => {
-    const grp = byEvent[ev];
-    if (!grp) return;
-    const all = [...grp.top, ...grp.short];
-    if (!all.length) return;
-    html += `<div class="summary-section"><h3 style="color:${COLORS[ev]}">${EMOJIS[ev]} ${ev}</h3><div class="summary-grid">`;
-    all.forEach(item => {
-      const ek = EVENT_KEY[item.event];
-      const vPhotos = venueData[ek].photos;
-      const pIdx = pairings[item.id] !== undefined ? pairings[item.id] : 0;
-      const vp = vPhotos[pIdx];
-      html += `<div class="sum-card">
-        <div class="sum-photos">
-          <div class="sum-photo"><img src="${vp.src}" alt=""><div class="sum-photo-lbl lbl-venue">📍 Venue</div></div>
-          <div class="sum-photo"><img src="${item.img}" alt=""><div class="sum-photo-lbl lbl-decor">✨ Inspo</div></div>
-        </div>
-        <div class="sum-footer">
-          <div class="sum-title">${item.title}</div>
-          <div class="sum-cat">${ev} · ${item.cat}</div>
-          <span class="sum-badge ${item.status==='top'?'top':'short'}">${item.status==='top'?'⭐ Top Pick':'✓ Shortlisted'}</span>
-        </div>
-      </div>`;
-    });
-    html += '</div></div>';
-  });
-
-  if (!html) html = '<div class="summary-empty">No items selected yet.</div>';
-  document.getElementById('summary-content').innerHTML = html;
-  document.getElementById('summary-overlay').classList.add('open');
-}
-function closeSummaryDirect() { document.getElementById('summary-overlay').classList.remove('open'); }
-</script>
-</body>
-</html>
+  document.getElementById('btn-summary').disabled = count =
