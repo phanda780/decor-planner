@@ -165,12 +165,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   .sum-card{break-inside:avoid}
 }
 
-/* ── Mobile ── */
-@media(max-width:760px){
-  /* Fix: kill sticky so venue photo doesn't float over decor cards */
-  .venue-panel{position:static !important;top:auto !important;margin-bottom:14px}
+/* ── Mobile collapsible venue panel toggle ── */
+.venue-toggle{display:none}
 
-  /* Tighten global spacing */
+/* ── Mobile — all phones/tablets up to 900px ── */
+@media(max-width:900px){
+  /* ① THE FIX: venue panel must NOT be sticky — kills the floating image bug */
+  .venue-panel{position:static !important;top:auto !important;margin-bottom:12px}
+
+  /* Collapsible venue panel on mobile */
+  .venue-toggle{display:flex;align-items:center;justify-content:space-between;
+    padding:9px 14px;background:#f1f5f9;border:none;width:100%;cursor:pointer;
+    font-size:0.75rem;font-weight:700;color:#475569;border-top:1px solid #e2e8f0;
+    letter-spacing:0.4px;text-transform:uppercase}
+  .venue-toggle .tog-arrow{transition:transform .2s;font-style:normal}
+  .venue-collapsible{overflow:hidden;transition:max-height .25s ease}
+  .venue-collapsible.collapsed{max-height:0 !important}
+
+  /* Global spacing */
   .event-inner{padding:10px 12px}
   body{padding-bottom:68px}
 
@@ -179,55 +191,58 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   .site-header h1{font-size:0.95rem}
   .header-meta{display:none}
 
-  /* Tabs — horizontal scroll, slightly bigger tap targets */
+  /* Tabs */
   .event-tab{padding:10px 14px;font-size:0.75rem}
 
-  /* Hero — compact */
+  /* Hero */
   .event-hero{padding:10px 14px;margin-bottom:12px}
   .event-hero h2{font-size:1rem}
   .event-hero .meta{font-size:0.72rem}
-  .event-hero .pills{gap:4px}
   .event-hero .pill{font-size:0.65rem;padding:2px 7px}
 
-  /* Venue carousel — shorter on mobile */
-  .venue-carousel img{height:200px}
+  /* Venue carousel height */
+  .venue-carousel img{height:195px}
 
-  /* Decor grid — 2 columns on phone, 1 on very small */
+  /* Decor cards grid — 2 columns */
   .options-grid{grid-template-columns:repeat(2,1fr);gap:8px}
-  @media(max-width:420px){.options-grid{grid-template-columns:1fr}}
-
-  /* Cards — tighter */
-  .card-img-wrap img{height:140px}
+  .card-img-wrap img{height:135px}
   .card-body{padding:7px 9px}
   .card-title{font-size:0.75rem}
   .card-desc{font-size:0.67rem}
   .card-actions{padding:6px 9px;gap:4px}
   .btn-pick,.btn-short{font-size:0.67rem;padding:5px 3px}
-
-  /* Pairing thumbs — bigger touch targets */
   .pairing-thumb{height:52px;width:76px}
   .card-pairing{padding:6px 9px 8px}
 
-  /* Lightbox — stack venue + decor vertically on mobile */
+  /* Lightbox — stack vertically */
   #lb-overlay{padding:10px}
-  .lb-panels{flex-direction:column;gap:8px;overflow-y:auto;max-height:88vh}
-  .lb-panel img,.lb-single{max-height:38vh}
+  .lb-panels{flex-direction:column;gap:6px;overflow-y:auto;max-height:90vh}
+  .lb-panel img,.lb-single{max-height:40vh;border-radius:5px}
   .lb-header{font-size:0.68rem;margin-bottom:6px}
-  #lb-close{top:8px;right:12px;font-size:1.4rem}
+  #lb-close{top:8px;right:12px;font-size:1.5rem}
 
-  /* Vendor summary modal */
-  .summary-modal{padding:16px;border-radius:8px}
-  .summary-grid{grid-template-columns:1fr 1fr;gap:8px}
-  @media(max-width:480px){.summary-grid{grid-template-columns:1fr}}
-  .sum-photo img{height:100px}
+  /* Summary modal */
+  .summary-modal{padding:14px}
+  .sum-photo img{height:95px}
 
-  /* Sticky bar */
-  .sticky-bar{padding:10px 16px}
+  /* Bottom bar */
+  .sticky-bar{padding:10px 14px}
   .sticky-bar .count{font-size:0.75rem}
   .btn-summary{padding:8px 14px;font-size:0.75rem}
 
   /* Info/note boxes */
   .info-box,.note-box{font-size:0.72rem;padding:8px 12px}
+}
+
+/* Very small phones — 1 column */
+@media(max-width:420px){
+  .options-grid{grid-template-columns:1fr}
+  .summary-grid{grid-template-columns:1fr}
+}
+
+/* Summary grid — 2 cols on medium phones */
+@media(min-width:421px) and (max-width:900px){
+  .summary-grid{grid-template-columns:1fr 1fr;gap:8px}
 }
 </style>
 </head>
@@ -262,6 +277,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="event-body">
     <div class="venue-panel">
       <div class="venue-panel-header"><span>📍 Main Lawn — Venue Reference</span><span id="sagan-ctr">1/6</span></div>
+      <button class="venue-toggle" onclick="toggleVenue('sagan',this)">📍 Venue photos <span class="tog-arrow">▾</span></button>
+      <div class="venue-collapsible" id="sagan-collapsible">
       <div class="venue-carousel" onclick="openVenueFull('sagan')">
         <img id="sagan-venue-img" src="03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.29 (9).jpeg" alt="">
         <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('sagan')">⛶ Full screen</button>
@@ -272,6 +289,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="venue-dots" id="sagan-dots"></div>
         <button onclick="venueNav('sagan',1)">Next →</button>
       </div>
+      </div><!-- /venue-collapsible -->
     </div>
     <div class="decor-panel">
       <div class="category-section">
@@ -368,6 +386,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="event-body">
     <div class="venue-panel">
       <div class="venue-panel-header"><span>📍 Upper Terrace — Venue Reference</span><span id="mehndi-ctr">1/5</span></div>
+      <button class="venue-toggle" onclick="toggleVenue('mehndi',this)">📍 Venue photos <span class="tog-arrow">▾</span></button>
+      <div class="venue-collapsible" id="mehndi-collapsible">
       <div class="venue-carousel" onclick="openVenueFull('mehndi')">
         <img id="mehndi-venue-img" src="03_Raw Venue Photos/B_Upper_Terrace_Mehndi/WhatsApp Image 2026-05-07 at 17.44.27 (1).jpeg" alt="">
         <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('mehndi')">⛶ Full screen</button>
@@ -378,6 +398,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="venue-dots" id="mehndi-dots"></div>
         <button onclick="venueNav('mehndi',1)">Next →</button>
       </div>
+      </div><!-- /venue-collapsible -->
     </div>
     <div class="decor-panel">
       <div class="info-box">💡 The terrace has a fixed mosaic tile floor and iron railing — all decor sits on top. Reference photos 3–5 show a previous wedding with decor installed so you can see how this space looks when dressed up.</div>
@@ -437,6 +458,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="event-body">
     <div class="venue-panel">
       <div class="venue-panel-header"><span>📍 Front Garden — Venue Reference</span><span id="haldi-ctr">1/5</span></div>
+      <button class="venue-toggle" onclick="toggleVenue('haldi',this)">📍 Venue photos <span class="tog-arrow">▾</span></button>
+      <div class="venue-collapsible" id="haldi-collapsible">
       <div class="venue-carousel" onclick="openVenueFull('haldi')">
         <img id="haldi-venue-img" src="03_Raw Venue Photos/C_Front_Lawn_Haldi/WhatsApp Image 2026-05-07 at 17.44.28.jpeg" alt="">
         <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('haldi')">⛶ Full screen</button>
@@ -447,6 +470,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="venue-dots" id="haldi-dots"></div>
         <button onclick="venueNav('haldi',1)">Next →</button>
       </div>
+      </div><!-- /venue-collapsible -->
     </div>
     <div class="decor-panel">
       <div class="info-box">💡 The Haldi space is the front garden with the white tent (crystal chandeliers, gold chiavari chairs already installed). Decor options below are about what you layer on top — backdrop wall, seating style, floral elements, centrepiece props.</div>
@@ -540,6 +564,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="event-body">
     <div class="venue-panel">
       <div class="venue-panel-header"><span>📍 Main Lawn — Venue Reference</span><span id="shaadi-ctr">1/4</span></div>
+      <button class="venue-toggle" onclick="toggleVenue('shaadi',this)">📍 Venue photos <span class="tog-arrow">▾</span></button>
+      <div class="venue-collapsible" id="shaadi-collapsible">
       <div class="venue-carousel" onclick="openVenueFull('shaadi')">
         <img id="shaadi-venue-img" src="03_Raw Venue Photos/A_Main_Lawn_Sagan_Shaadi/WhatsApp Image 2026-05-07 at 17.44.30.jpeg" alt="">
         <button class="fullscreen-btn" onclick="event.stopPropagation();openVenueFull('shaadi')">⛶ Full screen</button>
@@ -550,6 +576,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <div class="venue-dots" id="shaadi-dots"></div>
         <button onclick="venueNav('shaadi',1)">Next →</button>
       </div>
+      </div><!-- /venue-collapsible -->
     </div>
     <div class="decor-panel">
       <div class="info-box">💡 The mandap faces the mountain-valley view. Guests sit with backs to the hotel, looking at Himalayan peaks. 4 PM sundowner = golden hour light. These inspo shots are all mountain-wedding mandap references.</div>
@@ -784,41 +811,4 @@ function renderCard(id) {
   if (status === 'top') {
     card.classList.add('top-pick');
     const b = document.createElement('div');
-    b.className = 'card-status-badge badge-top';
-    b.textContent = '⭐ Top Pick';
-    card.querySelector('.card-img-wrap').prepend(b);
-  } else if (status === 'short') {
-    card.classList.add('shortlisted');
-    const b = document.createElement('div');
-    b.className = 'card-status-badge badge-short';
-    b.textContent = '✓ Shortlisted';
-    card.querySelector('.card-img-wrap').prepend(b);
-  }
-  // Pairing section
-  let pDiv = card.querySelector('.card-pairing');
-  if (!pDiv) {
-    pDiv = document.createElement('div');
-    pDiv.className = 'card-pairing';
-    card.appendChild(pDiv);
-  }
-  if (status) {
-    const meta = cardMeta[id];
-    const ek = EVENT_KEY[meta.event];
-    const vPhotos = venueData[ek].photos;
-    const activeIdx = pairings[id] !== undefined ? pairings[id] : 0;
-    const cls = status === 'top' ? 'pair-active-top' : 'pair-active-short';
-    pDiv.innerHTML = '<div class="pairing-label">📍 Choose venue photo for vendor summary:</div>'
-      + '<div class="pairing-thumbs">'
-      + vPhotos.map((p,i)=>`<img src="${p.src}" class="pairing-thumb${i===activeIdx?' '+cls:''}" onclick="setPairing('${id}',${i})" title="${p.cap}">`).join('')
-      + '</div>';
-    pDiv.style.display = 'block';
-  } else {
-    pDiv.style.display = 'none';
-    pDiv.innerHTML = '';
-  }
-}
-
-function updateBar() {
-  const count = Object.keys(picks).length;
-  document.getElementById('bar-count').textContent = count;
-  document.getElementById('btn-summary').disabled = count =
+    b.class
